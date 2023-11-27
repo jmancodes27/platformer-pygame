@@ -249,7 +249,7 @@ while running:
   # if player presses space create new instance of LaserProjectile at player x and y
   # in at the angle of gun
   #BUG1
-  if keys[pygame.K_q]:
+  if keys[pygame.K_SPACE]:
       if gun_cooldown <= 0:
         laser_projectiles.append(LaserProjectile(player_rect.x, player_rect.y, player_gun_dir))
         gun_cooldown = 25
