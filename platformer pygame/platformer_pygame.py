@@ -2,7 +2,7 @@ import pygame
 import sys
 import time
 import math
-
+# part of the code was written with chatgpt
 start_time = time.time()
 game_time = 0
 
@@ -131,7 +131,7 @@ player_rect = player.get_rect()
 player_rect.center = (1000, 400)
 can_jump = True
 game_level = 0
-frame_rate = 300
+frame_rate = 180
 time_per_frame = 1 / frame_rate
 # for some reason the pygame graph goes like this:
 #
@@ -219,11 +219,11 @@ while running:
   if keys[pygame.K_a]:
     if x_velocity > -2.5:
         print("a is going")
-        x_velocity += -0.05
+        x_velocity += -0.15
         x_velocity_dir = True
   elif keys[pygame.K_d]:
     if x_velocity < 2.5:
-        x_velocity += 0.05
+        x_velocity += 0.15
         x_velocity_dir = False
   if keys[pygame.K_w]:
     if y_velocity < 5 and can_jump:
@@ -269,9 +269,9 @@ while running:
 
       player_rect.x += x_velocity
       if x_velocity > 0:
-          x_velocity -= 0.05
+          x_velocity -= 0.1
       elif x_velocity < 0:
-          x_velocity += 0.05
+          x_velocity += 0.1
 
       for i in range(len(obstacle_list)):
         if plyr_coli_rect.colliderect(obstacle_list[i].tile_coli_rect):
@@ -332,20 +332,20 @@ while running:
           break
   for i in range(len(laser_projectiles)):
       if laser_projectiles[i].angle == 0:
-          laser_projectiles[i].projectile_rect.y -= 2
+          laser_projectiles[i].projectile_rect.y -= 4
       if laser_projectiles[i].angle == 1:
-          laser_projectiles[i].projectile_rect.y -= 1
-          laser_projectiles[i].projectile_rect.x += 1
-      if laser_projectiles[i].angle == 2:
+          laser_projectiles[i].projectile_rect.y -= 2
           laser_projectiles[i].projectile_rect.x += 2
+      if laser_projectiles[i].angle == 2:
+          laser_projectiles[i].projectile_rect.x += 4
       if laser_projectiles[i].angle == 3:
-          laser_projectiles[i].projectile_rect.y += 1
-          laser_projectiles[i].projectile_rect.x += 1
+          laser_projectiles[i].projectile_rect.y += 2
+          laser_projectiles[i].projectile_rect.x += 2
       if laser_projectiles[i].angle == 5:
-          laser_projectiles[i].projectile_rect.y += 1
-          laser_projectiles[i].projectile_rect.x -= 1
-      if laser_projectiles[i].angle == 6:
+          laser_projectiles[i].projectile_rect.y += 2
           laser_projectiles[i].projectile_rect.x -= 2
+      if laser_projectiles[i].angle == 6:
+          laser_projectiles[i].projectile_rect.x -= 4
       #BUG1
       if laser_projectiles[i].angle == 7:
           laser_projectiles[i].projectile_rect.y -= 1
