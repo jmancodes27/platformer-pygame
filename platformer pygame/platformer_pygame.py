@@ -131,6 +131,8 @@ player_rect = player.get_rect()
 player_rect.center = (1000, 400)
 can_jump = True
 game_level = 0
+frame_rate = 300
+time_per_frame = 1 / frame_rate
 # for some reason the pygame graph goes like this:
 #
 #           0
@@ -209,7 +211,6 @@ while running:
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       running = False
-
   #updates the in game time
   update_time()
 
@@ -217,6 +218,7 @@ while running:
   keys = pygame.key.get_pressed()
   if keys[pygame.K_a]:
     if x_velocity > -2.5:
+        print("a is going")
         x_velocity += -0.05
         x_velocity_dir = True
   elif keys[pygame.K_d]:
@@ -253,6 +255,7 @@ while running:
       if gun_cooldown <= 0:
         laser_projectiles.append(LaserProjectile(player_rect.x, player_rect.y, player_gun_dir))
         gun_cooldown = 25
+  
   # loops consistantly
   if last_time_comped != round(time.time(), 2):
       plyr_coli_rect = pygame.Rect(player_rect.x, player_rect.y, 50, 50)
@@ -266,9 +269,9 @@ while running:
 
       player_rect.x += x_velocity
       if x_velocity > 0:
-          x_velocity -= 0.15
+          x_velocity -= 0.05
       elif x_velocity < 0:
-          x_velocity += 0.15
+          x_velocity += 0.05
 
       for i in range(len(obstacle_list)):
         if plyr_coli_rect.colliderect(obstacle_list[i].tile_coli_rect):
@@ -351,6 +354,7 @@ while running:
   screen.fill((0, 0, 0))
 
   # Draw the player
+  frame_start_time = time.time()
   screen.blit(player, player_rect)
   for i in range(len(current_elementals_list)):
       if current_elementals_list[i].current_direction == 1:
@@ -381,7 +385,9 @@ while running:
   #if game_level == 4:
     #screen.blit(air_elemental_idle_right1, (400, 300))
     #screen.blit(air_elemental_idle_right_frames[air_anim_frame], (400, 300))
- 
+  frame_time = time.time() - frame_start_time
+  if frame_time < time_per_frame:
+    time.sleep(time_per_frame - frame_time)
  # Update the display
   pygame.display.flip()
 
