@@ -72,6 +72,8 @@ class AirElemental:
         self.origin_x = x
         self.origin_y = y
         self.dist_to_plyr = 0
+        self.hp = 3
+        self.hpcd = 0
         self.target_desti = target_destination
         if x < target_destination:
             self.current_direction = 1
@@ -298,7 +300,17 @@ while running:
                 current_elementals_list.append(AirElemental(all_elemental_lists[game_level][i], all_elemental_lists[game_level][i + 1], all_elemental_lists[game_level][i + 2]))
             flag_rect.x = flag_x_list[game_level]
             flag_rect.y = flag_y_list[game_level]
-
+      
+      for i in range(len(laser_projectiles)):
+          for o in range(len(current_elementals_list)):
+              if laser_projectiles[i].projectile_rect.colliderect(current_elementals_list[o].elemental_rect):
+                  print("you hit the air elemental!")
+                  if current_elementals_list[o].hpcd < 1:
+                      if current_elementals_list[o].hp > 0:
+                        current_elementals_list[o].hp -= 1
+                        current_elementals_list[o].hpcd = 60
+                      else:
+                          del current_elementals_list[o]
       if gun_cooldown > 0:
         gun_cooldown -= 1
       if air_anim_counter < 10:
@@ -308,6 +320,9 @@ while running:
           air_anim_frame += 1
           if air_anim_frame == 6:
               air_anim_frame = 0
+      for i in range(len(current_elementals_list)):
+          if current_elementals_list[i].hpcd > 0:
+              current_elementals_list[i].hpcd -= 1
       #moves the elementals on the screen to where they should go
       for i in range(int(len(current_elementals_list))):
           if not current_elementals_list[i].elemental_rect.x == current_elementals_list[i].target_desti:
@@ -332,24 +347,24 @@ while running:
           break
   for i in range(len(laser_projectiles)):
       if laser_projectiles[i].angle == 0:
-          laser_projectiles[i].projectile_rect.y -= 4
+          laser_projectiles[i].projectile_rect.y -= 10
       if laser_projectiles[i].angle == 1:
-          laser_projectiles[i].projectile_rect.y -= 2
-          laser_projectiles[i].projectile_rect.x += 2
+          laser_projectiles[i].projectile_rect.y -= 5
+          laser_projectiles[i].projectile_rect.x += 5
       if laser_projectiles[i].angle == 2:
-          laser_projectiles[i].projectile_rect.x += 4
+          laser_projectiles[i].projectile_rect.x += 10
       if laser_projectiles[i].angle == 3:
-          laser_projectiles[i].projectile_rect.y += 2
-          laser_projectiles[i].projectile_rect.x += 2
+          laser_projectiles[i].projectile_rect.y += 5
+          laser_projectiles[i].projectile_rect.x += 5
       if laser_projectiles[i].angle == 5:
-          laser_projectiles[i].projectile_rect.y += 2
-          laser_projectiles[i].projectile_rect.x -= 2
+          laser_projectiles[i].projectile_rect.y += 5
+          laser_projectiles[i].projectile_rect.x -= 5
       if laser_projectiles[i].angle == 6:
-          laser_projectiles[i].projectile_rect.x -= 4
+          laser_projectiles[i].projectile_rect.x -= 10
       #BUG1
       if laser_projectiles[i].angle == 7:
-          laser_projectiles[i].projectile_rect.y -= 1
-          laser_projectiles[i].projectile_rect.x -= 1
+          laser_projectiles[i].projectile_rect.y -= 5
+          laser_projectiles[i].projectile_rect.x -= 5
   # Clear the screen
   screen.fill((0, 0, 0))
 
