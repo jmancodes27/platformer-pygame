@@ -339,6 +339,16 @@ while running:
           current_elementals_list[i].dist_to_plyr = math.sqrt((abs(current_elementals_list[i].elemental_rect.x - player_rect.x) ** 2) + (abs(current_elementals_list[i].elemental_rect.y - player_rect.y) ** 2))
           if current_elementals_list[i].dist_to_plyr < 200:
               print("air elemental sees you!")
+              if current_elementals_list[i].elemental_rect.x > player_rect.x - 20:
+                  current_elementals_list[i].elemental_rect.x -= 3
+              elif current_elementals_list[i].elemental_rect.x < player_rect.x - 20:
+                  current_elementals_list[i].elemental_rect.x += 3
+              if current_elementals_list[i].elemental_rect.y > player_rect.y - 25:
+                  current_elementals_list[i].elemental_rect.y -= 3
+              elif current_elementals_list[i].elemental_rect.y < player_rect.y - 25:
+                  current_elementals_list[i].elemental_rect.y += 3
+              #current_elementals_list[i].elemental_rect.x -= 0.05 * (current_elementals_list[i].elemental_rect.x - player_rect.x)
+              #current_elementals_list[i].elemental_rect.y -= 
       last_time_comped = round(time.time(), 2)
     #removes a laser projectile if it is too far away
   for i in range(len(laser_projectiles)):
