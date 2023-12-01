@@ -174,16 +174,23 @@ box_y_list3 = [500, 500, 450, 450, 400, 400, 250]
 box_x_list4 = [200, 400, 200, 400, 800, 850]
 box_y_list4 = [450, 300, 150,  50, 400, 400]
 
-box_x_list5 = [400, 450, 500, 550, 600,  50, 200, 700, 750, 800, 850, 900]
-box_y_list5 = [350, 400, 400, 400, 350, 500, 400, 250, 300, 300, 300, 250]
-all_box_x_lists = [box_x_list1, box_x_list2, box_x_list3, box_x_list4, box_x_list5]
-all_box_y_lists = [box_y_list1, box_y_list2, box_y_list3, box_y_list4, box_y_list5]
+box_x_list5 = [400, 450, 500, 550, 600,  50, 200, 700, 750, 800, 850, 900, 950, 1000]
+box_y_list5 = [350, 400, 400, 400, 350, 500, 400, 250, 300, 300, 300, 250, 250,  250]
+
+box_x_list6 = [200, 300, 200, 400, 450, 500, 550, 600, 650, 700, 750, 800]
+box_y_list6 = [450, 400, 300, 250, 300, 300, 300, 300, 250, 200, 200, 200]
+
+box_x_list7 = [100]
+box_y_list7 = [500]
+
+all_box_x_lists = [box_x_list1, box_x_list2, box_x_list3, box_x_list4, box_x_list5, box_x_list6, box_x_list7]
+all_box_y_lists = [box_y_list1, box_y_list2, box_y_list3, box_y_list4, box_y_list5, box_y_list6, box_y_list7]
 obstacle_list = []
 for i in range(len(all_box_x_lists[game_level])):
     obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
 
-flag_x_list = [200, 1000, 650, 850, 0]
-flag_y_list = [100,  400, 250, 400, 9999]
+flag_x_list = [200, 1000, 650, 850, 1000, 800, 100]
+flag_y_list = [100,  400, 250, 400,  250, 200, 9999]
 
 #format: x, y, target
 air_elemental_list1 = []
@@ -191,8 +198,10 @@ air_elemental_list2 = []
 air_elemental_list3 = []
 air_elemental_list4 = []
 air_elemental_list5 = [400, 300, 550, 700, 200, 850]
+air_elemental_list6 = [400, 200, 600, 600, 200, 400]
+air_elemental_list7 = []
 all_elemental_lists = [air_elemental_list1, air_elemental_list2, air_elemental_list3, 
-air_elemental_list4, air_elemental_list5]
+air_elemental_list4, air_elemental_list5, air_elemental_list6, air_elemental_list7]
 current_elementals_list = []
 laser_projectiles = []
 
