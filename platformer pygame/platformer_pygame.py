@@ -101,23 +101,23 @@ gun_left = pygame.transform.scale(gun_left, (int(gun_left.get_width() * 0.15), i
 gun_left_up = pygame.image.load("LeftUp.png")
 gun_left_up = pygame.transform.scale(gun_left_up, (int(gun_left_up.get_width() * 0.15), int(gun_left_up.get_height() * 0.15)))
 
-air_elemental_idle_right1 = pygame.image.load("AirElementalIdle/air_idle_right0.png")
-air_elemental_idle_right2 = pygame.image.load("AirElementalIdle/air_idle_right1.png")
-air_elemental_idle_right3 = pygame.image.load("AirElementalIdle/air_idle_right2.png")
-air_elemental_idle_right4 = pygame.image.load("AirElementalIdle/air_idle_right3.png")
-air_elemental_idle_right5 = pygame.image.load("AirElementalIdle/air_idle_right4.png")
-air_elemental_idle_right6 = pygame.image.load("AirElementalIdle/air_idle_right5.png")
-air_elemental_idle_right_frames = [air_elemental_idle_right1, air_elemental_idle_right2, air_elemental_idle_right3,
-air_elemental_idle_right4, air_elemental_idle_right5, air_elemental_idle_right6]
+#air_elemental_idle_right1 = pygame.image.load("AirElementalIdle/air_idle_right0.png")
+#air_elemental_idle_right2 = pygame.image.load("AirElementalIdle/air_idle_right1.png")
+#air_elemental_idle_right3 = pygame.image.load("AirElementalIdle/air_idle_right2.png")
+#air_elemental_idle_right4 = pygame.image.load("AirElementalIdle/air_idle_right3.png")
+#air_elemental_idle_right5 = pygame.image.load("AirElementalIdle/air_idle_right4.png")
+#air_elemental_idle_right6 = pygame.image.load("AirElementalIdle/air_idle_right5.png")
+#air_elemental_idle_right_frames = [air_elemental_idle_right1, air_elemental_idle_right2, air_elemental_idle_right3,
+#air_elemental_idle_right4, air_elemental_idle_right5, air_elemental_idle_right6]
 
-air_elemental_idle_left1 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left0.png")
-air_elemental_idle_left2 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left1.png")
-air_elemental_idle_left3 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left2.png")
-air_elemental_idle_left4 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left3.png")
-air_elemental_idle_left5 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left4.png")
-air_elemental_idle_left6 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left5.png")
-air_elemental_idle_left_frames = [air_elemental_idle_left1, air_elemental_idle_left2, air_elemental_idle_left3,
-air_elemental_idle_left4, air_elemental_idle_left5, air_elemental_idle_left6]
+#air_elemental_idle_left1 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left0.png")
+#air_elemental_idle_left2 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left1.png")
+#air_elemental_idle_left3 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left2.png")
+#air_elemental_idle_left4 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left3.png")
+#air_elemental_idle_left5 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left4.png")
+#air_elemental_idle_left6 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left5.png")
+#air_elemental_idle_left_frames = [air_elemental_idle_left1, air_elemental_idle_left2, air_elemental_idle_left3,
+#air_elemental_idle_left4, air_elemental_idle_left5, air_elemental_idle_left6]
 
 
 # loads the flag ito surface
@@ -174,8 +174,8 @@ box_y_list3 = [500, 500, 450, 450, 400, 400, 250]
 box_x_list4 = [200, 400, 200, 400, 800, 850]
 box_y_list4 = [450, 300, 150,  50, 400, 400]
 
-box_x_list5 = [400, 450, 500, 550, 600,  50, 200]
-box_y_list5 = [350, 400, 400, 400, 350, 500, 400]
+box_x_list5 = [400, 450, 500, 550, 600,  50, 200, 700, 750, 800, 850, 900]
+box_y_list5 = [350, 400, 400, 400, 350, 500, 400, 250, 300, 300, 300, 250]
 all_box_x_lists = [box_x_list1, box_x_list2, box_x_list3, box_x_list4, box_x_list5]
 all_box_y_lists = [box_y_list1, box_y_list2, box_y_list3, box_y_list4, box_y_list5]
 obstacle_list = []
@@ -190,7 +190,7 @@ air_elemental_list1 = []
 air_elemental_list2 = []
 air_elemental_list3 = []
 air_elemental_list4 = []
-air_elemental_list5 = [400, 300, 550]
+air_elemental_list5 = [400, 300, 550, 700, 200, 850]
 all_elemental_lists = [air_elemental_list1, air_elemental_list2, air_elemental_list3, 
 air_elemental_list4, air_elemental_list5]
 current_elementals_list = []
@@ -220,7 +220,6 @@ while running:
   keys = pygame.key.get_pressed()
   if keys[pygame.K_a]:
     if x_velocity > -2.5:
-        print("a is going")
         x_velocity += -0.15
         x_velocity_dir = True
   elif keys[pygame.K_d]:
@@ -250,6 +249,11 @@ while running:
           player_gun_dir = 2
   elif keys[pygame.K_UP]:
       player_gun_dir = 0
+
+  if keys[pygame.K_y]:
+      print(current_elementals_list[1].elemental_rect.x)
+  if keys[pygame.K_u]:
+      print(current_elementals_list[1].elemental_rect.y)
   # if player presses space create new instance of LaserProjectile at player x and y
   # in at the angle of gun
   #BUG1
@@ -297,7 +301,9 @@ while running:
             for i in range(len(all_box_x_lists[game_level])):
                 obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
             for i in range(int(len(all_elemental_lists[game_level]) / 3)):
-                current_elementals_list.append(AirElemental(all_elemental_lists[game_level][i], all_elemental_lists[game_level][i + 1], all_elemental_lists[game_level][i + 2]))
+                # issue, not totally sure how. The list is only moveing forward by one
+                current_elementals_list.append(AirElemental(all_elemental_lists[game_level][i * 3], all_elemental_lists[game_level][i * 3 + 1], all_elemental_lists[game_level][i * 3 + 2]))
+                print(f"made a new elemental with {all_elemental_lists[game_level][i*3]} x, {all_elemental_lists[game_level][(i*3) + 1]} y, {all_elemental_lists[game_level][(i*3) + 2]} target x.")
             flag_rect.x = flag_x_list[game_level]
             flag_rect.y = flag_y_list[game_level]
       
@@ -311,6 +317,7 @@ while running:
                         current_elementals_list[o].hpcd = 60
                       else:
                           del current_elementals_list[o]
+                          break
       if gun_cooldown > 0:
         gun_cooldown -= 1
       if air_anim_counter < 10:
@@ -336,7 +343,7 @@ while running:
               temp_var = current_elementals_list[i].origin_x
               current_elementals_list[i].origin_x = current_elementals_list[i].target_desti
               current_elementals_list[i].target_desti = temp_var
-          current_elementals_list[i].dist_to_plyr = math.sqrt((abs(current_elementals_list[i].elemental_rect.x - player_rect.x) ** 2) + (abs(current_elementals_list[i].elemental_rect.y - player_rect.y) ** 2))
+          current_elementals_list[i].dist_to_plyr = math.sqrt((abs(current_elementals_list[i].elemental_rect.x - player_rect.x - 20) ** 2) + (abs(current_elementals_list[i].elemental_rect.y - player_rect.y - 25) ** 2))
           if current_elementals_list[i].dist_to_plyr < 200:
               print("air elemental sees you!")
               if current_elementals_list[i].elemental_rect.x > player_rect.x - 20:
@@ -347,6 +354,21 @@ while running:
                   current_elementals_list[i].elemental_rect.y -= 3
               elif current_elementals_list[i].elemental_rect.y < player_rect.y - 25:
                   current_elementals_list[i].elemental_rect.y += 3
+              if current_elementals_list[i].dist_to_plyr < 60:
+                  print("the elemental got you")
+              #if (current_elementals_list[i].elemental_rect.y < player_rect.y - 35 or current_elementals_list[i].elemental_rect.y > player_rect.y - 15) and current_elementals_list[i].elemental_rect.x == player_rect.x - 20:
+                  #maybe I should make this a function
+                  #BIG BUG: ELEMENTAL NOT DELETED (fixed)
+                  game_level -= 1
+                  obstacle_list.clear()
+                  for i in range(len(all_box_x_lists[game_level])):
+                      obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
+                  for i in range(int(len(all_elemental_lists[game_level]) / 3)):
+                      current_elementals_list.append(AirElemental(all_elemental_lists[game_level][i * 3], all_elemental_lists[game_level][(i * 3) + 1], all_elemental_lists[game_level][(i * 3) + 2]))
+                  flag_rect.x = flag_x_list[game_level]
+                  flag_rect.y = flag_y_list[game_level]
+                  current_elementals_list.clear()
+                  break
               #current_elementals_list[i].elemental_rect.x -= 0.05 * (current_elementals_list[i].elemental_rect.x - player_rect.x)
               #current_elementals_list[i].elemental_rect.y -= 
       last_time_comped = round(time.time(), 2)
