@@ -260,7 +260,18 @@ while running:
       player_gun_dir = 0
 
   if keys[pygame.K_y]:
-      print(current_elementals_list[1].elemental_rect.x)
+      #debugging cheat(risky; doesnt walways work)
+      print("user cheated to move level forward")
+      game_level += 1
+      obstacle_list.clear()
+      for i in range(len(all_box_x_lists[game_level])):
+          obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
+      for i in range(int(len(all_elemental_lists[game_level]) / 3)):
+          # issue, not totally sure how. The list is only moveing forward by one
+          current_elementals_list.append(AirElemental(all_elemental_lists[game_level][i * 3], all_elemental_lists[game_level][i * 3 + 1], all_elemental_lists[game_level][i * 3 + 2]))
+          print(f"made a new elemental with {all_elemental_lists[game_level][i*3]} x, {all_elemental_lists[game_level][(i*3) + 1]} y, {all_elemental_lists[game_level][(i*3) + 2]} target x.")
+      flag_rect.x = flag_x_list[game_level]
+      flag_rect.y = flag_y_list[game_level]
   if keys[pygame.K_u]:
       print(current_elementals_list[1].elemental_rect.y)
   # if player presses space create new instance of LaserProjectile at player x and y
@@ -339,7 +350,7 @@ while running:
       for i in range(len(current_elementals_list)):
           if current_elementals_list[i].hpcd > 0:
               current_elementals_list[i].hpcd -= 1
-      #moves the elementals on the screen to where they should go
+      # for loop that handles most elemental things
       for i in range(int(len(current_elementals_list))):
           if not current_elementals_list[i].elemental_rect.x == current_elementals_list[i].target_desti:
               if current_elementals_list[i].target_desti - current_elementals_list[i].origin_x > 0:
@@ -355,14 +366,17 @@ while running:
           current_elementals_list[i].dist_to_plyr = math.sqrt((abs(current_elementals_list[i].elemental_rect.x - player_rect.x - 20) ** 2) + (abs(current_elementals_list[i].elemental_rect.y - player_rect.y - 25) ** 2))
           if current_elementals_list[i].dist_to_plyr < 200:
               print("air elemental sees you!")
-              if current_elementals_list[i].elemental_rect.x > player_rect.x - 20:
-                  current_elementals_list[i].elemental_rect.x -= 3
-              elif current_elementals_list[i].elemental_rect.x < player_rect.x - 20:
-                  current_elementals_list[i].elemental_rect.x += 3
-              if current_elementals_list[i].elemental_rect.y > player_rect.y - 25:
-                  current_elementals_list[i].elemental_rect.y -= 3
-              elif current_elementals_list[i].elemental_rect.y < player_rect.y - 25:
-                  current_elementals_list[i].elemental_rect.y += 3
+              #if current_elementals_list[i].elemental_rect.x > player_rect.x - 20:
+              #    current_elementals_list[i].elemental_rect.x -= 3
+              #elif current_elementals_list[i].elemental_rect.x < player_rect.x - 20:
+              #    current_elementals_list[i].elemental_rect.x += 3
+              #if current_elementals_list[i].elemental_rect.y > player_rect.y - 25:
+              #    current_elementals_list[i].elemental_rect.y -= 3
+              #elif current_elementals_list[i].elemental_rect.y < player_rect.y - 25:
+              #    current_elementals_list[i].elemental_rect.y += 3
+              temp_var1 = ((current_elementals_list[i].elemental_rect.x - player_rect.x) ** 2 + (current_elementals_list[i].elemental_rect.y - player_rect.y) ** 2) / 15 ** 2
+              current_elementals_list[i].elemental_rect.x -= (current_elementals_list[i].elemental_rect.x - player_rect.x) / temp_var1
+              current_elementals_list[i].elemental_rect.y -= (current_elementals_list[i].elemental_rect.y - player_rect.y) / temp_var1
               if current_elementals_list[i].dist_to_plyr < 60:
                   print("the elemental got you")
               #if (current_elementals_list[i].elemental_rect.y < player_rect.y - 35 or current_elementals_list[i].elemental_rect.y > player_rect.y - 15) and current_elementals_list[i].elemental_rect.x == player_rect.x - 20:
