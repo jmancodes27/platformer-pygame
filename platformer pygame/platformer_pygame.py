@@ -74,6 +74,7 @@ class AirElemental:
         self.dist_to_plyr = 0
         self.hp = 3
         self.hpcd = 0
+        self.chasing = False
         self.target_desti = target_destination
         if x < target_destination:
             self.current_direction = 1
@@ -324,6 +325,7 @@ while running:
                 # issue, not totally sure how. The list is only moveing forward by one
                 current_elementals_list.append(AirElemental(all_elemental_lists[game_level][i * 3], all_elemental_lists[game_level][i * 3 + 1], all_elemental_lists[game_level][i * 3 + 2]))
                 print(f"made a new elemental with {all_elemental_lists[game_level][i*3]} x, {all_elemental_lists[game_level][(i*3) + 1]} y, {all_elemental_lists[game_level][(i*3) + 2]} target x.")
+            y_velocity -= 10
             flag_rect.x = flag_x_list[game_level]
             flag_rect.y = flag_y_list[game_level]
       
@@ -352,28 +354,23 @@ while running:
               current_elementals_list[i].hpcd -= 1
       # for loop that handles most elemental things
       for i in range(int(len(current_elementals_list))):
-          if not current_elementals_list[i].elemental_rect.x == current_elementals_list[i].target_desti:
-              if current_elementals_list[i].target_desti - current_elementals_list[i].origin_x > 0:
-                  current_elementals_list[i].elemental_rect.x += 1
-                  current_elementals_list[i].current_direction = 1
+          if not current_elementals_list[i].chasing:
+              if not current_elementals_list[i].elemental_rect.x == current_elementals_list[i].target_desti:
+                  if current_elementals_list[i].target_desti - current_elementals_list[i].origin_x > 0:
+                      current_elementals_list[i].elemental_rect.x += 1
+                      current_elementals_list[i].current_direction = 1
+                  else:
+                      current_elementals_list[i].elemental_rect.x -= 1
+                      current_elementals_list[i].current_direction = -1
               else:
-                  current_elementals_list[i].elemental_rect.x -= 1
-                  current_elementals_list[i].current_direction = -1
-          else:
-              temp_var = current_elementals_list[i].origin_x
-              current_elementals_list[i].origin_x = current_elementals_list[i].target_desti
-              current_elementals_list[i].target_desti = temp_var
+                  temp_var = current_elementals_list[i].origin_x
+                  current_elementals_list[i].origin_x = current_elementals_list[i].target_desti
+                  current_elementals_list[i].target_desti = temp_var
           current_elementals_list[i].dist_to_plyr = math.sqrt((abs(current_elementals_list[i].elemental_rect.x - player_rect.x - 20) ** 2) + (abs(current_elementals_list[i].elemental_rect.y - player_rect.y - 25) ** 2))
-          if current_elementals_list[i].dist_to_plyr < 200:
+          if current_elementals_list[i].dist_to_plyr < 215:
               print("air elemental sees you!")
-              #if current_elementals_list[i].elemental_rect.x > player_rect.x - 20:
-              #    current_elementals_list[i].elemental_rect.x -= 3
-              #elif current_elementals_list[i].elemental_rect.x < player_rect.x - 20:
-              #    current_elementals_list[i].elemental_rect.x += 3
-              #if current_elementals_list[i].elemental_rect.y > player_rect.y - 25:
-              #    current_elementals_list[i].elemental_rect.y -= 3
-              #elif current_elementals_list[i].elemental_rect.y < player_rect.y - 25:
-              #    current_elementals_list[i].elemental_rect.y += 3
+              current_elementals_list[i].chasing = True
+          if current_elementals_list[i].chasing:
               temp_var1 = ((current_elementals_list[i].elemental_rect.x - player_rect.x) ** 2 + (current_elementals_list[i].elemental_rect.y - player_rect.y) ** 2) / 15 ** 2
               current_elementals_list[i].elemental_rect.x -= (current_elementals_list[i].elemental_rect.x - player_rect.x) / temp_var1
               current_elementals_list[i].elemental_rect.y -= (current_elementals_list[i].elemental_rect.y - player_rect.y) / temp_var1
