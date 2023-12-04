@@ -48,6 +48,7 @@ class Flag:
         self.flag_rect = self.flag.get_rect()
         self.flag_rect.x = x
         self.flag_rect.y = y
+# potential optemization: have the instance of AirElemental have an int veriable that represents which surface to use
 class AirElemental:
     def __init__(self, x, y, target_destination):
         air_elemental_idle_right1 = pygame.image.load("AirElementalIdle/air_idle_right0.png")
@@ -120,6 +121,34 @@ gun_left_up = pygame.transform.scale(gun_left_up, (int(gun_left_up.get_width() *
 #air_elemental_idle_left_frames = [air_elemental_idle_left1, air_elemental_idle_left2, air_elemental_idle_left3,
 #air_elemental_idle_left4, air_elemental_idle_left5, air_elemental_idle_left6]
 
+boss_walk_right0 = pygame.image.load("Wizard/WizardRunRight/wizard_run_right0.png")
+boss_walk_right1 = pygame.image.load("Wizard/WizardRunRight/wizard_run_right1.png")
+boss_walk_right2 = pygame.image.load("Wizard/WizardRunRight/wizard_run_right2.png")
+boss_walk_right3 = pygame.image.load("Wizard/WizardRunRight/wizard_run_right3.png")
+boss_walk_right4 = pygame.image.load("Wizard/WizardRunRight/wizard_run_right4.png")
+boss_walk_right5 = pygame.image.load("Wizard/WizardRunRight/wizard_run_right5.png")
+boss_walk_right6 = pygame.image.load("Wizard/WizardRunRight/wizard_run_right6.png")
+boss_walk_right7 = pygame.image.load("Wizard/WizardRunRight/wizard_run_right7.png")
+boss_walk_right_frames = [boss_walk_right0, boss_walk_right1, boss_walk_right2, boss_walk_right3, boss_walk_right4, 
+boss_walk_right5, boss_walk_right6, boss_walk_right7]
+
+boss_walk_left0 = pygame.image.load("Wizard/WizardRunLeft/wizard_run_left0.png")
+boss_walk_left1 = pygame.image.load("Wizard/WizardRunLeft/wizard_run_left1.png")
+boss_walk_left2 = pygame.image.load("Wizard/WizardRunLeft/wizard_run_left2.png")
+boss_walk_left3 = pygame.image.load("Wizard/WizardRunLeft/wizard_run_left3.png")
+boss_walk_left4 = pygame.image.load("Wizard/WizardRunLeft/wizard_run_left4.png")
+boss_walk_left5 = pygame.image.load("Wizard/WizardRunLeft/wizard_run_left5.png")
+boss_walk_left6 = pygame.image.load("Wizard/WizardRunLeft/wizard_run_left6.png")
+boss_walk_left7 = pygame.image.load("Wizard/WizardRunLeft/wizard_run_left7.png")
+boss_walk_left_frames = [boss_walk_left0, boss_walk_left1, boss_walk_left2, boss_walk_left3, boss_walk_left4, 
+boss_walk_left5, boss_walk_left6, boss_walk_left7]
+
+boss_rect = boss_walk_right7.get_rect()
+boss_rect.x = 300
+boss_rect.y = 400
+# 0 is not moving, 1 is moving right, 2 is moving left
+boss_direction = 1
+boss_ai_on = True
 
 # loads the flag ito surface
 flag = pygame.image.load("flag.png")
@@ -217,6 +246,9 @@ player_gun_dir = 2
 gun_cooldown = 0
 air_anim_counter = 0
 air_anim_frame = 0
+boss_anim_counter1 = 0
+boss_anim_frame1 = 0
+debug_level = 6
 # Game loop
 running = True
 while running:
@@ -260,10 +292,10 @@ while running:
   elif keys[pygame.K_UP]:
       player_gun_dir = 0
 
-  if keys[pygame.K_y]:
+  if keys[pygame.K_y] and not game_level == debug_level:
       #debugging cheat(risky; doesnt walways work)
       print("user cheated to move level forward")
-      game_level += 1
+      game_level = debug_level
       obstacle_list.clear()
       for i in range(len(all_box_x_lists[game_level])):
           obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
@@ -347,8 +379,11 @@ while running:
       else:
           air_anim_counter = 0 
           air_anim_frame += 1
+          boss_anim_frame1 += 1
           if air_anim_frame == 6:
               air_anim_frame = 0
+          if boss_anim_frame1 == 7:
+              boss_anim_frame1 = 0
       for i in range(len(current_elementals_list)):
           if current_elementals_list[i].hpcd > 0:
               current_elementals_list[i].hpcd -= 1
@@ -391,6 +426,17 @@ while running:
                   break
               #current_elementals_list[i].elemental_rect.x -= 0.05 * (current_elementals_list[i].elemental_rect.x - player_rect.x)
               #current_elementals_list[i].elemental_rect.y -= 
+
+      #boss logic
+      boss_player_distance = math.sqrt((abs(boss_rect.x - player_rect.x - 0) ** 2) + (abs(boss_rect.y - player_rect.y - 0) ** 2))
+      boss_movement_var = ((boss_rect.x - player_rect.x) ** 2 + (boss_rect.y - player_rect.y) ** 2) / 45 ** 2
+      if boss_player_distance > 400:
+          boss_rect.x -= (boss_rect.x - player_rect.x) / boss_movement_var
+          boss_rect.y -= (boss_rect.y - player_rect.y) / boss_movement_var
+      if boss_player_distance < 200:
+          boss_rect.x += (boss_rect.x - player_rect.x) / boss_movement_var
+          boss_rect.y += (boss_rect.y - player_rect.y) / boss_movement_var
+
       last_time_comped = round(time.time(), 2)
     #removes a laser projectile if it is too far away
   for i in range(len(laser_projectiles)):
@@ -447,7 +493,13 @@ while running:
   for i in range(len(laser_projectiles)):
       screen.blit(laser_projectiles[i].projectile, (laser_projectiles[i].projectile_rect.x, laser_projectiles[i].projectile_rect.y))
   screen.blit(flag, (flag_rect.x + 16, flag_rect.y - 79))
-
+  if game_level == 6:
+      if boss_direction == 1:
+          screen.blit(boss_walk_right_frames[boss_anim_frame1], boss_rect)
+      elif boss_direction == 2:
+          screen.blit(boss_walk_left_frames[boss_anim_frame1], boss_rect)
+      elif boss_direction == 0:
+          screen.blit(boss_walk_right_frames[0], boss_rect)
 
   #if game_level == 4:
     #screen.blit(air_elemental_idle_right1, (400, 300))
