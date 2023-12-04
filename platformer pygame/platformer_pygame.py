@@ -41,6 +41,7 @@ class LaserProjectile:
         self.projectile_rect.x = origin_x
         self.projectile_rect.y = origin_y
         self.angle = angle
+        self.boss_distance = 0
 class Flag:
     def __init__(self, x, y):
         self.flag = pygame.image.load("flag.png")
@@ -436,7 +437,13 @@ while running:
       if boss_player_distance < 200:
           boss_rect.x += (boss_rect.x - player_rect.x) / boss_movement_var
           boss_rect.y += (boss_rect.y - player_rect.y) / boss_movement_var
-
+      #doges bullets
+      for i in range(len(laser_projectiles)):
+          if math.sqrt((abs(boss_rect.x - laser_projectiles[i].projectile_rect.x - 0) ** 2) + (abs(boss_rect.y - laser_projectiles[i].projectile_rect.y - 0) ** 2)) < 100:
+              boss_rect.x += 100
+              boss_rect.y -= 100
+          laser_projectiles[i].boss_distance = math.sqrt((abs(boss_rect.x - laser_projectiles[i].projectile_rect.x - 0) ** 2) + (abs(boss_rect.y - laser_projectiles[i].projectile_rect.y - 0) ** 2))
+          print(laser_projectiles[i].boss_distance)
       last_time_comped = round(time.time(), 2)
     #removes a laser projectile if it is too far away
   for i in range(len(laser_projectiles)):
