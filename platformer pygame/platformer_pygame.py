@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 import math
+import random
 # part of the code was written with chatgpt
 start_time = time.time()
 game_time = 0
@@ -82,7 +83,27 @@ class AirElemental:
             self.current_direction = 1
         else:
             self.current_direction = -1
-        
+
+class LightningAttack:
+    def __init__(self, x, y):
+        lightning0 = pygame.image.load("lightningAttack/lightning0.png")
+        lightning0 = pygame.transform.scale(lightning0, (int(lightning0.get_width() * 0.45), int(lightning0.get_height() * 0.45)))
+        lightning1 = pygame.image.load("lightningAttack/lightning1.png")
+        lightning1 = pygame.transform.scale(lightning1, (int(lightning1.get_width() * 0.45), int(lightning1.get_height() * 0.45)))
+        lightning2 = pygame.image.load("lightningAttack/lightning2.png")
+        lightning2 = pygame.transform.scale(lightning2, (int(lightning2.get_width() * 0.45), int(lightning2.get_height() * 0.45)))
+        lightning3 = pygame.image.load("lightningAttack/lightning3.png")
+        lightning3 = pygame.transform.scale(lightning3, (int(lightning3.get_width() * 0.45), int(lightning3.get_height() * 0.45)))
+        lightning4 = pygame.image.load("lightningAttack/lightning4.png")
+        lightning4 = pygame.transform.scale(lightning4, (int(lightning4.get_width() * 0.45), int(lightning4.get_height() * 0.45)))
+        self.frames = [lightning0, lightning1, lightning2, lightning3, lightning4]
+        self.lightning_rect = lightning0.get_rect()
+        self.lightning_rect.x = x
+        self.lightning_rect.y = y
+        self.frame_num = 0
+        self.frame_counter = 0
+current_lightning = []
+
 # Load the player sprite (yellow box) and scale it down
 player = pygame.image.load("plyr.png")
 plyr_width, plyr_height = int(player.get_width() * 0.10), int(player.get_height() * 0.10)
@@ -250,6 +271,7 @@ air_anim_frame = 0
 boss_anim_counter1 = 0
 boss_anim_frame1 = 0
 debug_level = 6
+lightning_frame = 0
 # Game loop
 running = True
 while running:
@@ -308,6 +330,9 @@ while running:
       flag_rect.y = flag_y_list[game_level]
   if keys[pygame.K_u]:
       print(current_elementals_list[1].elemental_rect.y)
+  if keys[pygame.K_b]:
+      if len(current_lightning) < 2:
+          current_lightning.append(LightningAttack(player_rect.x, player_rect.y))
   # if player presses space create new instance of LaserProjectile at player x and y
   # in at the angle of gun
   #BUG1
@@ -373,6 +398,11 @@ while running:
                       else:
                           del current_elementals_list[o]
                           break
+      lightning_frame += 1
+      if lightning_frame == 5:
+        for i in range(len(current_lightning)):
+            current_lightning[i].frame_num += 1
+        lightning_frame = 0
       if gun_cooldown > 0:
         gun_cooldown -= 1
       if air_anim_counter < 10:
@@ -385,6 +415,7 @@ while running:
               air_anim_frame = 0
           if boss_anim_frame1 == 7:
               boss_anim_frame1 = 0
+          
       for i in range(len(current_elementals_list)):
           if current_elementals_list[i].hpcd > 0:
               current_elementals_list[i].hpcd -= 1
@@ -437,13 +468,20 @@ while running:
       if boss_player_distance < 200:
           boss_rect.x += (boss_rect.x - player_rect.x) / boss_movement_var
           boss_rect.y += (boss_rect.y - player_rect.y) / boss_movement_var
+      if abs((boss_rect.x - player_rect.x) / boss_movement_var) == ((boss_rect.x - player_rect.x) / boss_movement_var):
+          boss_direction = 2 #left
+      else:
+          boss_direction = 1 # right
       #doges bullets
       for i in range(len(laser_projectiles)):
+          #doges bullets
           if math.sqrt((abs(boss_rect.x - laser_projectiles[i].projectile_rect.x - 0) ** 2) + (abs(boss_rect.y - laser_projectiles[i].projectile_rect.y - 0) ** 2)) < 100:
-              boss_rect.x += 100
-              boss_rect.y -= 100
+              boss_rect.x += random.randint(-200, 200)
+              boss_rect.y -= random.randint(-200, 200)
           laser_projectiles[i].boss_distance = math.sqrt((abs(boss_rect.x - laser_projectiles[i].projectile_rect.x - 0) ** 2) + (abs(boss_rect.y - laser_projectiles[i].projectile_rect.y - 0) ** 2))
-          print(laser_projectiles[i].boss_distance)
+      for i in range(len(current_lightning)):
+          if current_lightning[i].lightning_rect.x + 25 > player_rect.x and current_lightning[i].lightning_rect.x - 25 < player_rect.x:
+              print("you died L")
       last_time_comped = round(time.time(), 2)
     #removes a laser projectile if it is too far away
   for i in range(len(laser_projectiles)):
@@ -507,7 +545,11 @@ while running:
           screen.blit(boss_walk_left_frames[boss_anim_frame1], boss_rect)
       elif boss_direction == 0:
           screen.blit(boss_walk_right_frames[0], boss_rect)
-
+  for i in range(len(current_lightning)):
+      if current_lightning[i].frame_num > 4:
+          del current_lightning[0]
+          break
+      screen.blit(current_lightning[i].frames[current_lightning[i].frame_num], (current_lightning[i].lightning_rect.x - 10, current_lightning[i].lightning_rect.y - 300))
   #if game_level == 4:
     #screen.blit(air_elemental_idle_right1, (400, 300))
     #screen.blit(air_elemental_idle_right_frames[air_anim_frame], (400, 300))
