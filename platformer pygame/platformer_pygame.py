@@ -165,6 +165,30 @@ boss_walk_left7 = pygame.image.load("Wizard/WizardRunLeft/wizard_run_left7.png")
 boss_walk_left_frames = [boss_walk_left0, boss_walk_left1, boss_walk_left2, boss_walk_left3, boss_walk_left4, 
 boss_walk_left5, boss_walk_left6, boss_walk_left7]
 
+boss_l_atck0 = pygame.image.load("Wizard/WizardLightningAttack1/wizard_atk0.png")
+boss_l_atck1 = pygame.image.load("Wizard/WizardLightningAttack1/wizard_atk1.png")
+boss_l_atck2 = pygame.image.load("Wizard/WizardLightningAttack1/wizard_atk2.png")
+boss_l_atck3 = pygame.image.load("Wizard/WizardLightningAttack1/wizard_atk3.png")
+boss_l_atck4 = pygame.image.load("Wizard/WizardLightningAttack1/wizard_atk4.png")
+boss_l_atck5 = pygame.image.load("Wizard/WizardLightningAttack1/wizard_atk5.png")
+boss_l_atck6 = pygame.image.load("Wizard/WizardLightningAttack1/wizard_atk6.png")
+boss_l_atck7 = pygame.image.load("Wizard/WizardLightningAttack1/wizard_atk7.png")
+boss_l_atck_frames = [boss_l_atck0, boss_l_atck1, boss_l_atck2, boss_l_atck3, boss_l_atck4, boss_l_atck5, 
+boss_l_atck6, boss_l_atck7]
+
+boss_l_atck_left0 = pygame.image.load("Wizard/WizardLightningAttackLeft1/wizard_lightning_atck_left0.png")
+boss_l_atck_left1 = pygame.image.load("Wizard/WizardLightningAttackLeft1/wizard_lightning_atck_left1.png")
+boss_l_atck_left2 = pygame.image.load("Wizard/WizardLightningAttackLeft1/wizard_lightning_atck_left2.png")
+boss_l_atck_left3 = pygame.image.load("Wizard/WizardLightningAttackLeft1/wizard_lightning_atck_left3.png")
+boss_l_atck_left4 = pygame.image.load("Wizard/WizardLightningAttackLeft1/wizard_lightning_atck_left4.png")
+boss_l_atck_left5 = pygame.image.load("Wizard/WizardLightningAttackLeft1/wizard_lightning_atck_left5.png")
+boss_l_atck_left6 = pygame.image.load("Wizard/WizardLightningAttackLeft1/wizard_lightning_atck_left6.png")
+boss_l_atck_left7 = pygame.image.load("Wizard/WizardLightningAttackLeft1/wizard_lightning_atck_left7.png")
+boss_l_atck_frames_left = [boss_l_atck_left0, boss_l_atck_left1, boss_l_atck_left2, boss_l_atck_left3, boss_l_atck_left4, 
+boss_l_atck_left5, boss_l_atck_left6, boss_l_atck_left7]
+
+boss_anim_state = 0
+
 boss_rect = boss_walk_right7.get_rect()
 boss_rect.x = 300
 boss_rect.y = 400
@@ -220,8 +244,8 @@ box_y_list1 = [ 500, 400, 300, 200, 100]
 box_x_list2 = [1000, 750, 500, 250]
 box_y_list2 = [ 400, 450, 500, 550]
 
-box_x_list3 = [200, 250, 350, 400, 750, 800, 650]
-box_y_list3 = [500, 500, 450, 450, 400, 400, 250]
+box_x_list3 = [200, 250, 350, 400, 750, 800, 650, 477] #kal was here
+box_y_list3 = [500, 500, 450, 450, 400, 400, 250, 232]
 
 box_x_list4 = [200, 400, 200, 400, 800, 850]
 box_y_list4 = [450, 300, 150,  50, 400, 400]
@@ -270,8 +294,11 @@ air_anim_counter = 0
 air_anim_frame = 0
 boss_anim_counter1 = 0
 boss_anim_frame1 = 0
+boss_anim_frame2 = 0
 debug_level = 6
 lightning_frame = 0
+boss_target_x = 0
+boss_target_y = 0
 # Game loop
 running = True
 while running:
@@ -331,8 +358,11 @@ while running:
   if keys[pygame.K_u]:
       print(current_elementals_list[1].elemental_rect.y)
   if keys[pygame.K_b]:
-      if len(current_lightning) < 2:
-          current_lightning.append(LightningAttack(player_rect.x, player_rect.y))
+      if len(current_lightning) < 1:
+          boss_anim_state = 1
+          boss_anim_frame2 = 0
+          boss_target_x = player_rect.x
+          boss_target_y = player_rect.y
   # if player presses space create new instance of LaserProjectile at player x and y
   # in at the angle of gun
   #BUG1
@@ -411,10 +441,13 @@ while running:
           air_anim_counter = 0 
           air_anim_frame += 1
           boss_anim_frame1 += 1
+          boss_anim_frame2 += 1
           if air_anim_frame == 6:
               air_anim_frame = 0
           if boss_anim_frame1 == 7:
               boss_anim_frame1 = 0
+          if boss_anim_frame2 == 9:
+              boss_anim_frame2 = 0
           
       for i in range(len(current_elementals_list)):
           if current_elementals_list[i].hpcd > 0:
@@ -509,7 +542,7 @@ while running:
           laser_projectiles[i].projectile_rect.y -= 5
           laser_projectiles[i].projectile_rect.x -= 5
   # Clear the screen
-  screen.fill((0, 0, 0))
+  screen.fill((0, 0, 0)) 
 
   # Draw the player
   frame_start_time = time.time()
@@ -539,12 +572,23 @@ while running:
       screen.blit(laser_projectiles[i].projectile, (laser_projectiles[i].projectile_rect.x, laser_projectiles[i].projectile_rect.y))
   screen.blit(flag, (flag_rect.x + 16, flag_rect.y - 79))
   if game_level == 6:
-      if boss_direction == 1:
-          screen.blit(boss_walk_right_frames[boss_anim_frame1], boss_rect)
-      elif boss_direction == 2:
-          screen.blit(boss_walk_left_frames[boss_anim_frame1], boss_rect)
-      elif boss_direction == 0:
-          screen.blit(boss_walk_right_frames[0], boss_rect)
+      if boss_anim_state == 0:
+          if boss_direction == 1:
+              screen.blit(boss_walk_right_frames[boss_anim_frame1], boss_rect)
+          elif boss_direction == 2:
+              screen.blit(boss_walk_left_frames[boss_anim_frame1], boss_rect)
+          elif boss_direction == 0:
+              screen.blit(boss_walk_right_frames[0], boss_rect)
+      if boss_anim_state == 1:
+          if boss_anim_frame2 == 8:
+              boss_anim_frame2 = 0
+              boss_anim_state = 0
+              current_lightning.append(LightningAttack(boss_target_x, boss_target_y))
+          else:
+              if boss_direction == 1:
+                  screen.blit(boss_l_atck_frames[boss_anim_frame2], boss_rect)
+              if boss_direction == 2:
+                  screen.blit(boss_l_atck_frames_left[boss_anim_frame2], boss_rect)
   for i in range(len(current_lightning)):
       if current_lightning[i].frame_num > 4:
           del current_lightning[0]
