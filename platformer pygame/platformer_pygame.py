@@ -51,12 +51,16 @@ class LaserProjectile:
 
 class Fireball:
     def __init__(self, origin_x, origin_y, angle):
-        self.fireball0 = pygame.image.load("Wizard/FireBallUp/fireball0.png")
+        fireball0 = pygame.image.load("Wizard/FireBallUp/fireball0.png")
+        fireball0 = pygame.transform.scale(fireball0, (int(fireball0.get_width() * 2.5), int(fireball0.get_height() * 2.5)))
         fireball1 = pygame.image.load("Wizard/FireBallUp/fireball1.png")
+        fireball1 = pygame.transform.scale(fireball1, (int(fireball1.get_width() * 2.5), int(fireball1.get_height() * 2.5)))
         fireball2 = pygame.image.load("Wizard/FireBallUp/fireball2.png")
+        fireball2 = pygame.transform.scale(fireball2, (int(fireball2.get_width() * 2.5), int(fireball2.get_height() * 2.5)))
         fireball3 = pygame.image.load("Wizard/FireBallUp/fireball3.png")
-        self.fireball_frames = [self.fireball0, fireball1, fireball2, fireball3]
-        self.fireball_rect = self.fireball0.get_rect()
+        fireball3 = pygame.transform.scale(fireball3, (int(fireball3.get_width() * 2.5), int(fireball3.get_height() * 2.5)))
+        self.fireball_frames = [fireball0, fireball1, fireball2, fireball3]
+        self.fireball_rect = fireball0.get_rect()
         self.fireball_rect.x = origin_x
         self.fireball_rect.y = origin_y
         self.angle = angle
@@ -402,10 +406,11 @@ while running:
           boss_target_x = player_rect.x
           boss_target_y = player_rect.y
           current_fireballs.append(Fireball(300, 300, 0))
-  if keys[pygame.K_n]:
+  if keys[pygame.K_n] and boss_anim_state != 2:
       boss_anim_state = 2
       boss_fireball_counter = 0
       boss_anim_frame3 = 0 #issue: might be immediately increased after this
+      boss_rect.y += 100
       #Dived into three equal sections where the player could be. If in middle section, move wizard to either end of screen
       #if in either end sections, but wizard in middle
       if player_rect.x < 400 or player_rect.x > 800:
@@ -414,7 +419,7 @@ while running:
           if player_rect.x > 600:
               boss_rect.x = 0
           else:
-              boss_rect.x = 1200
+              boss_rect.x = 1100
   # if player presses space create new instance of LaserProjectile at player x and y
   # in at the angle of gun
   #BUG1
@@ -580,9 +585,9 @@ while running:
           break
   for i in range(len(current_fireballs)):
       if current_fireballs[i].angle == 2:
-          current_fireballs[i].fireball_rect.x += 3
+          current_fireballs[i].fireball_rect.x += 4
       elif current_fireballs[i].angle == 6:
-          current_fireballs[i].fireball_rect.x -= 3
+          current_fireballs[i].fireball_rect.x -= 4
   for i in range(len(laser_projectiles)):
       if laser_projectiles[i].angle == 0:
           laser_projectiles[i].projectile_rect.y -= 10
@@ -663,8 +668,19 @@ while running:
                       current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 2))
                   elif boss_direction == 2:
                       current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 6))
+                  boss_fireball_counter = 0.5
+                  boss_rect.y -= 50
+          if boss_fireball_counter == 0.5 and boss_anim_frame3 == 0:
+              boss_fireball_counter = 1
+          if boss_fireball_counter == 1:
+              if boss_anim_frame3 == 4:
+                  if boss_direction == 1:
+                      current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 2))
+                  elif boss_direction == 2:
+                      current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 6))
                   boss_fireball_counter = 1.5
                   boss_rect.y -= 50
+                  print("moved fireball couter to 2")
           if boss_fireball_counter == 1.5 and boss_anim_frame3 == 0:
               boss_fireball_counter = 2
           if boss_fireball_counter == 2:
@@ -673,10 +689,21 @@ while running:
                       current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 2))
                   elif boss_direction == 2:
                       current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 6))
-                  boss_fireball_counter = 2
+                  boss_fireball_counter = 2.5
                   boss_rect.y -= 50
-                  print("moved fireball couter to 2")
-          if boss_fireball_counter == 2 and boss_anim_frame3 == 0:
+          if boss_fireball_counter == 2.5 and boss_anim_frame3 == 0:
+              boss_fireball_counter = 3
+          if boss_fireball_counter == 3:
+              if boss_anim_frame3 == 4:
+                  if boss_direction == 1:
+                      current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 2))
+                  elif boss_direction == 2:
+                      current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 6))
+                  boss_fireball_counter = 3.5
+                  boss_rect.y -= 50
+          if boss_fireball_counter == 3.5 and boss_anim_frame3 == 0:
+              boss_fireball_counter = 4
+          if boss_fireball_counter == 4:
               if boss_anim_frame3 == 4:
                   if boss_direction == 1:
                       current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 2))
@@ -684,8 +711,6 @@ while running:
                       current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 6))
                   boss_fireball_counter = 0
                   boss_anim_state = 0
-
-          
 
   for i in range(len(current_lightning)):
       if current_lightning[i].frame_num > 4:
