@@ -227,6 +227,26 @@ boss_p_atck_right3 = pygame.image.load("Wizard/WizardAttack2Right/wizard_attack2
 boss_p_atck_right4 = pygame.image.load("Wizard/WizardAttack2Right/wizard_attack2_right4.png")
 boss_p_atck_right_frames = [boss_p_atck_right0, boss_p_atck_right1, boss_p_atck_right2, boss_p_atck_right3, boss_p_atck_right4]
 
+boss_s_atck_right0 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack00.png")
+boss_s_atck_right1 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack01.png")
+boss_s_atck_right2 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack02.png")
+boss_s_atck_right3 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack03.png")
+boss_s_atck_right4 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack04.png")
+boss_s_atck_right5 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack05.png")
+boss_s_atck_right6 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack06.png")
+boss_s_atck_right7 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack07.png")
+boss_s_atck_right8 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack08.png")
+boss_s_atck_right9 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack09.png")
+boss_s_atck_right10 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack10.png")
+boss_s_atck_right11 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack11.png")
+boss_s_atck_right12 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack12.png")
+boss_s_atck_right13 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack13.png")
+boss_s_atck_right14 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack14.png")
+boss_s_atck_right15 = pygame.image.load("Wizard/WizardSummonRight/wizard_summon_attack15.png")
+boss_s_atck_right_frames = [boss_s_atck_right0, boss_s_atck_right1, boss_s_atck_right2, boss_s_atck_right3, boss_s_atck_right4, 
+boss_s_atck_right5, boss_s_atck_right6, boss_s_atck_right7, boss_s_atck_right8, boss_s_atck_right9, boss_s_atck_right10, 
+boss_s_atck_right11, boss_s_atck_right12, boss_s_atck_right13, boss_s_atck_right14, boss_s_atck_right15]
+
 boss_anim_state = 0
 
 boss_rect = boss_walk_right7.get_rect()
@@ -337,11 +357,13 @@ boss_anim_counter1 = 0
 boss_anim_frame1 = 0
 boss_anim_frame2 = 0
 boss_anim_frame3 = 0
+boss_anim_frame4 = 0
 fireball_anim_frame = 0
 debug_level = 6
 lightning_frame = 0
 boss_target_x = 0
 boss_target_y = 0
+temp_elemental_count = 0
 # Game loop
 running = True
 while running:
@@ -405,7 +427,6 @@ while running:
           boss_anim_frame2 = 0
           boss_target_x = player_rect.x
           boss_target_y = player_rect.y
-          current_fireballs.append(Fireball(300, 300, 0))
   if keys[pygame.K_n] and boss_anim_state != 2:
       boss_anim_state = 2
       boss_fireball_counter = 0
@@ -420,6 +441,9 @@ while running:
               boss_rect.x = 0
           else:
               boss_rect.x = 1100
+  if keys[pygame.K_m] and boss_anim_state != 3:
+      boss_anim_state = 3
+
   # if player presses space create new instance of LaserProjectile at player x and y
   # in at the angle of gun
   #BUG1
@@ -500,6 +524,7 @@ while running:
           boss_anim_frame1 += 1
           boss_anim_frame2 += 1
           boss_anim_frame3 += 1
+          boss_anim_frame4 += 1
           fireball_anim_frame += 1
           if air_anim_frame == 6:
               air_anim_frame = 0
@@ -511,6 +536,8 @@ while running:
               fireball_anim_frame = 0  
           if boss_anim_frame3 == 5:
               boss_anim_frame3 = 0
+          if boss_anim_frame4 == 16:
+              boss_anim_frame4 = 0
       for i in range(len(current_elementals_list)):
           if current_elementals_list[i].hpcd > 0:
               current_elementals_list[i].hpcd -= 1
@@ -680,7 +707,6 @@ while running:
                       current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 6))
                   boss_fireball_counter = 1.5
                   boss_rect.y -= 50
-                  print("moved fireball couter to 2")
           if boss_fireball_counter == 1.5 and boss_anim_frame3 == 0:
               boss_fireball_counter = 2
           if boss_fireball_counter == 2:
@@ -711,7 +737,16 @@ while running:
                       current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 6))
                   boss_fireball_counter = 0
                   boss_anim_state = 0
-
+      if boss_anim_state == 3:
+          screen.blit(boss_s_atck_right_frames[boss_anim_frame4], boss_rect)
+          if boss_anim_frame4 == 11 and temp_elemental_count == 0:
+              current_elementals_list.append(AirElemental(player_rect.x - 220, player_rect.y, player_rect.x))
+              temp_elemental_count += 1
+          if boss_anim_frame4 == 12 and temp_elemental_count == 1:
+              current_elementals_list.append(AirElemental(player_rect.x - 220, player_rect.y, player_rect.x))
+              temp_elemental_count = 0
+          if boss_anim_frame4 == 15:
+              boss_anim_state = 0
   for i in range(len(current_lightning)):
       if current_lightning[i].frame_num > 4:
           del current_lightning[0]
