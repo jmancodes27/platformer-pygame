@@ -19,6 +19,11 @@ WIDTH, HEIGHT = 1200, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Platformer")
 
+def rotate_image_from_list(List, angle):
+    for i in range(len(List)):
+        List[i] = pygame.transform.rotate(List[i], angle)
+    return List
+        
 class Obstacle:
     def __init__(self, x, y, width, height):
         self.tile = pygame.image.load("grass.png")
@@ -43,6 +48,23 @@ class LaserProjectile:
         self.projectile_rect.y = origin_y
         self.angle = angle
         self.boss_distance = 0
+
+class Fireball:
+    def __init__(self, origin_x, origin_y, angle):
+        self.fireball0 = pygame.image.load("Wizard/FireBallUp/fireball0.png")
+        fireball1 = pygame.image.load("Wizard/FireBallUp/fireball1.png")
+        fireball2 = pygame.image.load("Wizard/FireBallUp/fireball2.png")
+        fireball3 = pygame.image.load("Wizard/FireBallUp/fireball3.png")
+        self.fireball_frames = [self.fireball0, fireball1, fireball2, fireball3]
+        self.fireball_rect = self.fireball0.get_rect()
+        self.fireball_rect.x = origin_x
+        self.fireball_rect.y = origin_y
+        self.angle = angle
+        for i in range(8):
+            if angle == i:
+                self.fireball_frames = rotate_image_from_list(self.fireball_frames, i * -45)
+                break
+
 class Flag:
     def __init__(self, x, y):
         self.flag = pygame.image.load("flag.png")
@@ -187,6 +209,20 @@ boss_l_atck_left7 = pygame.image.load("Wizard/WizardLightningAttackLeft1/wizard_
 boss_l_atck_frames_left = [boss_l_atck_left0, boss_l_atck_left1, boss_l_atck_left2, boss_l_atck_left3, boss_l_atck_left4, 
 boss_l_atck_left5, boss_l_atck_left6, boss_l_atck_left7]
 
+boss_p_atck_left0 = pygame.image.load("Wizard/WizardAttack2Left/WizardAttack2Left0.png")
+boss_p_atck_left1 = pygame.image.load("Wizard/WizardAttack2Left/WizardAttack2Left1.png")
+boss_p_atck_left2 = pygame.image.load("Wizard/WizardAttack2Left/WizardAttack2Left2.png")
+boss_p_atck_left3 = pygame.image.load("Wizard/WizardAttack2Left/WizardAttack2Left3.png")
+boss_p_atck_left4 = pygame.image.load("Wizard/WizardAttack2Left/WizardAttack2Left4.png")
+boss_p_atck_left_frames = [boss_p_atck_left0, boss_p_atck_left1, boss_p_atck_left2, boss_p_atck_left3, boss_p_atck_left4]
+
+boss_p_atck_right0 = pygame.image.load("Wizard/WizardAttack2Right/wizard_attack2_right0.png")
+boss_p_atck_right1 = pygame.image.load("Wizard/WizardAttack2Right/wizard_attack2_right1.png")
+boss_p_atck_right2 = pygame.image.load("Wizard/WizardAttack2Right/wizard_attack2_right2.png")
+boss_p_atck_right3 = pygame.image.load("Wizard/WizardAttack2Right/wizard_attack2_right3.png")
+boss_p_atck_right4 = pygame.image.load("Wizard/WizardAttack2Right/wizard_attack2_right4.png")
+boss_p_atck_right_frames = [boss_p_atck_right0, boss_p_atck_right1, boss_p_atck_right2, boss_p_atck_right3, boss_p_atck_right4]
+
 boss_anim_state = 0
 
 boss_rect = boss_walk_right7.get_rect()
@@ -280,6 +316,7 @@ all_elemental_lists = [air_elemental_list1, air_elemental_list2, air_elemental_l
 air_elemental_list4, air_elemental_list5, air_elemental_list6, air_elemental_list7]
 current_elementals_list = []
 laser_projectiles = []
+current_fireballs = []
 
 # Set initial movement variables
 player_speed = 1
@@ -295,6 +332,8 @@ air_anim_frame = 0
 boss_anim_counter1 = 0
 boss_anim_frame1 = 0
 boss_anim_frame2 = 0
+boss_anim_frame3 = 0
+fireball_anim_frame = 0
 debug_level = 6
 lightning_frame = 0
 boss_target_x = 0
@@ -343,7 +382,6 @@ while running:
       player_gun_dir = 0
 
   if keys[pygame.K_y] and not game_level == debug_level:
-      #debugging cheat(risky; doesnt walways work)
       print("user cheated to move level forward")
       game_level = debug_level
       obstacle_list.clear()
@@ -363,6 +401,20 @@ while running:
           boss_anim_frame2 = 0
           boss_target_x = player_rect.x
           boss_target_y = player_rect.y
+          current_fireballs.append(Fireball(300, 300, 0))
+  if keys[pygame.K_n]:
+      boss_anim_state = 2
+      boss_fireball_counter = 0
+      boss_anim_frame3 = 0 #issue: might be immediately increased after this
+      #Dived into three equal sections where the player could be. If in middle section, move wizard to either end of screen
+      #if in either end sections, but wizard in middle
+      if player_rect.x < 400 or player_rect.x > 800:
+          boss_rect.x = 600 #puts boss in middle
+      else:
+          if player_rect.x > 600:
+              boss_rect.x = 0
+          else:
+              boss_rect.x = 1200
   # if player presses space create new instance of LaserProjectile at player x and y
   # in at the angle of gun
   #BUG1
@@ -442,13 +494,18 @@ while running:
           air_anim_frame += 1
           boss_anim_frame1 += 1
           boss_anim_frame2 += 1
+          boss_anim_frame3 += 1
+          fireball_anim_frame += 1
           if air_anim_frame == 6:
               air_anim_frame = 0
           if boss_anim_frame1 == 7:
               boss_anim_frame1 = 0
           if boss_anim_frame2 == 9:
               boss_anim_frame2 = 0
-          
+          if fireball_anim_frame == 4:
+              fireball_anim_frame = 0  
+          if boss_anim_frame3 == 5:
+              boss_anim_frame3 = 0
       for i in range(len(current_elementals_list)):
           if current_elementals_list[i].hpcd > 0:
               current_elementals_list[i].hpcd -= 1
@@ -495,10 +552,10 @@ while running:
       #boss logic
       boss_player_distance = math.sqrt((abs(boss_rect.x - player_rect.x - 0) ** 2) + (abs(boss_rect.y - player_rect.y - 0) ** 2))
       boss_movement_var = ((boss_rect.x - player_rect.x) ** 2 + (boss_rect.y - player_rect.y) ** 2) / 45 ** 2
-      if boss_player_distance > 400:
+      if boss_player_distance > 400 and boss_anim_state == 0:
           boss_rect.x -= (boss_rect.x - player_rect.x) / boss_movement_var
           boss_rect.y -= (boss_rect.y - player_rect.y) / boss_movement_var
-      if boss_player_distance < 200:
+      if boss_player_distance < 200 and boss_anim_state == 0:
           boss_rect.x += (boss_rect.x - player_rect.x) / boss_movement_var
           boss_rect.y += (boss_rect.y - player_rect.y) / boss_movement_var
       if abs((boss_rect.x - player_rect.x) / boss_movement_var) == ((boss_rect.x - player_rect.x) / boss_movement_var):
@@ -521,6 +578,11 @@ while running:
       if abs(laser_projectiles[i].projectile_rect.x) + abs(laser_projectiles[i].projectile_rect.y) > 1800:
           del laser_projectiles[i]
           break
+  for i in range(len(current_fireballs)):
+      if current_fireballs[i].angle == 2:
+          current_fireballs[i].fireball_rect.x += 3
+      elif current_fireballs[i].angle == 6:
+          current_fireballs[i].fireball_rect.x -= 3
   for i in range(len(laser_projectiles)):
       if laser_projectiles[i].angle == 0:
           laser_projectiles[i].projectile_rect.y -= 10
@@ -579,7 +641,7 @@ while running:
               screen.blit(boss_walk_left_frames[boss_anim_frame1], boss_rect)
           elif boss_direction == 0:
               screen.blit(boss_walk_right_frames[0], boss_rect)
-      if boss_anim_state == 1:
+      elif boss_anim_state == 1:
           if boss_anim_frame2 == 8:
               boss_anim_frame2 = 0
               boss_anim_state = 0
@@ -589,11 +651,49 @@ while running:
                   screen.blit(boss_l_atck_frames[boss_anim_frame2], boss_rect)
               if boss_direction == 2:
                   screen.blit(boss_l_atck_frames_left[boss_anim_frame2], boss_rect)
+      elif boss_anim_state == 2:
+          if boss_direction == 1:
+              screen.blit(boss_p_atck_right_frames[boss_anim_frame3], boss_rect)
+          elif boss_direction == 2:
+              screen.blit(boss_p_atck_left_frames[boss_anim_frame3], boss_rect)
+          #boss_direction, boss_p_atck_right_frames
+          if boss_fireball_counter == 0:
+              if boss_anim_frame3 == 4:
+                  if boss_direction == 1:
+                      current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 2))
+                  elif boss_direction == 2:
+                      current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 6))
+                  boss_fireball_counter = 1.5
+                  boss_rect.y -= 50
+          if boss_fireball_counter == 1.5 and boss_anim_frame3 == 0:
+              boss_fireball_counter = 2
+          if boss_fireball_counter == 2:
+              if boss_anim_frame3 == 4:
+                  if boss_direction == 1:
+                      current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 2))
+                  elif boss_direction == 2:
+                      current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 6))
+                  boss_fireball_counter = 2
+                  boss_rect.y -= 50
+                  print("moved fireball couter to 2")
+          if boss_fireball_counter == 2 and boss_anim_frame3 == 0:
+              if boss_anim_frame3 == 4:
+                  if boss_direction == 1:
+                      current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 2))
+                  elif boss_direction == 2:
+                      current_fireballs.append(Fireball(boss_rect.x, boss_rect.y, 6))
+                  boss_fireball_counter = 0
+                  boss_anim_state = 0
+
+          
+
   for i in range(len(current_lightning)):
       if current_lightning[i].frame_num > 4:
           del current_lightning[0]
           break
       screen.blit(current_lightning[i].frames[current_lightning[i].frame_num], (current_lightning[i].lightning_rect.x - 10, current_lightning[i].lightning_rect.y - 300))
+  for i in range(len(current_fireballs)):
+      screen.blit(current_fireballs[i].fireball_frames[fireball_anim_frame], current_fireballs[i].fireball_rect)
   #if game_level == 4:
     #screen.blit(air_elemental_idle_right1, (400, 300))
     #screen.blit(air_elemental_idle_right_frames[air_anim_frame], (400, 300))
