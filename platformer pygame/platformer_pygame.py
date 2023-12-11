@@ -255,6 +255,9 @@ boss_rect.y = 400
 # 0 is not moving, 1 is moving right, 2 is moving left
 boss_direction = 1
 boss_ai_on = True
+boss_hp_cd = 1000
+boss_hp = 15
+boss_random_atack_cd = 1000
 
 # loads the flag ito surface
 flag = pygame.image.load("flag.png")
@@ -364,6 +367,7 @@ lightning_frame = 0
 boss_target_x = 0
 boss_target_y = 0
 temp_elemental_count = 0
+boss_fireball_counter = 0
 # Game loop
 running = True
 while running:
@@ -443,7 +447,13 @@ while running:
               boss_rect.x = 1100
   if keys[pygame.K_m] and boss_anim_state != 3:
       boss_anim_state = 3
-
+      boss_anim_frame4 = 0
+  if keys[pygame.K_o]:
+      boss_random_attack_cd = 1000000
+  if keys[pygame.K_p]:
+      boss_random_attack_cd = 5
+      
+      #boss_random_attack_cd
   # if player presses space create new instance of LaserProjectile at player x and y
   # in at the angle of gun
   #BUG1
@@ -497,7 +507,8 @@ while running:
             y_velocity -= 10
             flag_rect.x = flag_x_list[game_level]
             flag_rect.y = flag_y_list[game_level]
-      
+      if boss_hp_cd > 0:
+          boss_hp_cd -= 1
       for i in range(len(laser_projectiles)):
           for o in range(len(current_elementals_list)):
               if laser_projectiles[i].projectile_rect.colliderect(current_elementals_list[o].elemental_rect):
@@ -536,7 +547,7 @@ while running:
               fireball_anim_frame = 0  
           if boss_anim_frame3 == 5:
               boss_anim_frame3 = 0
-          if boss_anim_frame4 == 16:
+          if boss_anim_frame4 == 55:
               boss_anim_frame4 = 0
       for i in range(len(current_elementals_list)):
           if current_elementals_list[i].hpcd > 0:
@@ -580,8 +591,33 @@ while running:
                   break
               #current_elementals_list[i].elemental_rect.x -= 0.05 * (current_elementals_list[i].elemental_rect.x - player_rect.x)
               #current_elementals_list[i].elemental_rect.y -= 
-
+      print(boss_random_atack_cd)
       #boss logic
+      if boss_random_atack_cd > 0:
+          boss_random_atack_cd -= 1
+      if boss_random_atack_cd == 0:
+          boss_anim_state = random.randint(1, 3)
+          boss_random_atack_cd = 1000
+          #boss_random_attack_cd = random.randint(50, 150)
+          if boss_anim_state == 1:
+              boss_anim_frame2 = 0
+              boss_target_x = player_rect.x
+              boss_target_y = player_rect.y
+          elif boss_anim_state == 2:
+              boss_fireball_counter = 0
+              boss_anim_frame3 = 0 #issue: might be immediately increased after this
+              boss_rect.y += 100
+              #Dived into three equal sections where the player could be. If in middle section, move wizard to either end of screen
+              #if in either end sections, but wizard in middle
+              if player_rect.x < 400 or player_rect.x > 800:
+                  boss_rect.x = 600 #puts boss in middle
+              else:
+                  if player_rect.x > 600:
+                      boss_rect.x = 0
+                  else:
+                      boss_rect.x = 1100
+          elif boss_anim_state == 3:
+              boss_anim_frame4 = 0
       boss_player_distance = math.sqrt((abs(boss_rect.x - player_rect.x - 0) ** 2) + (abs(boss_rect.y - player_rect.y - 0) ** 2))
       boss_movement_var = ((boss_rect.x - player_rect.x) ** 2 + (boss_rect.y - player_rect.y) ** 2) / 45 ** 2
       if boss_player_distance > 400 and boss_anim_state == 0:
@@ -594,12 +630,17 @@ while running:
           boss_direction = 2 #left
       else:
           boss_direction = 1 # right
-      #doges bullets
+      #doges bullets 
       for i in range(len(laser_projectiles)):
           #doges bullets
           if math.sqrt((abs(boss_rect.x - laser_projectiles[i].projectile_rect.x - 0) ** 2) + (abs(boss_rect.y - laser_projectiles[i].projectile_rect.y - 0) ** 2)) < 100:
-              boss_rect.x += random.randint(-200, 200)
-              boss_rect.y -= random.randint(-200, 200)
+              if boss_anim_state == 3:
+                  if boss_hp_cd == 0:
+                      boss_hp -= 1
+                      boss_hp_cd = 75
+              else:
+                  boss_rect.x += random.randint(-200, 200)
+                  boss_rect.y -= random.randint(-200, 200)
           laser_projectiles[i].boss_distance = math.sqrt((abs(boss_rect.x - laser_projectiles[i].projectile_rect.x - 0) ** 2) + (abs(boss_rect.y - laser_projectiles[i].projectile_rect.y - 0) ** 2))
       for i in range(len(current_lightning)):
           if current_lightning[i].lightning_rect.x + 25 > player_rect.x and current_lightning[i].lightning_rect.x - 25 < player_rect.x:
@@ -665,6 +706,8 @@ while running:
   for i in range(len(laser_projectiles)):
       screen.blit(laser_projectiles[i].projectile, (laser_projectiles[i].projectile_rect.x, laser_projectiles[i].projectile_rect.y))
   screen.blit(flag, (flag_rect.x + 16, flag_rect.y - 79))
+  if boss_hp <= 0:
+      print("you win! YAYY")
   if game_level == 6:
       if boss_anim_state == 0:
           if boss_direction == 1:
@@ -738,14 +781,17 @@ while running:
                   boss_fireball_counter = 0
                   boss_anim_state = 0
       if boss_anim_state == 3:
-          screen.blit(boss_s_atck_right_frames[boss_anim_frame4], boss_rect)
+          if boss_anim_frame4 > 15:
+              screen.blit(boss_s_atck_right_frames[15], boss_rect)
+          else:
+              screen.blit(boss_s_atck_right_frames[boss_anim_frame4], boss_rect)
           if boss_anim_frame4 == 11 and temp_elemental_count == 0:
               current_elementals_list.append(AirElemental(player_rect.x - 220, player_rect.y, player_rect.x))
               temp_elemental_count += 1
           if boss_anim_frame4 == 12 and temp_elemental_count == 1:
               current_elementals_list.append(AirElemental(player_rect.x - 220, player_rect.y, player_rect.x))
               temp_elemental_count = 0
-          if boss_anim_frame4 == 15:
+          if boss_anim_frame4 == 54:
               boss_anim_state = 0
   for i in range(len(current_lightning)):
       if current_lightning[i].frame_num > 4:
