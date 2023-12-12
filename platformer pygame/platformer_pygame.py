@@ -247,6 +247,28 @@ boss_s_atck_right_frames = [boss_s_atck_right0, boss_s_atck_right1, boss_s_atck_
 boss_s_atck_right5, boss_s_atck_right6, boss_s_atck_right7, boss_s_atck_right8, boss_s_atck_right9, boss_s_atck_right10, 
 boss_s_atck_right11, boss_s_atck_right12, boss_s_atck_right13, boss_s_atck_right14, boss_s_atck_right15]
 
+bossbar = pygame.image.load("Wizard/wizard_bossbar.png")
+bossbar15 = pygame.transform.scale(bossbar, (666, 375))
+bossbar14 = pygame.transform.scale(bossbar, (621, 375))
+bossbar13 = pygame.transform.scale(bossbar, (576, 375))
+bossbar12 = pygame.transform.scale(bossbar, (531, 375))
+bossbar11 = pygame.transform.scale(bossbar, (477, 375))
+bossbar10 = pygame.transform.scale(bossbar, (432, 375))
+bossbar9 = pygame.transform.scale(bossbar, (387, 375))
+bossbar8 = pygame.transform.scale(bossbar, (342, 375))
+bossbar7 = pygame.transform.scale(bossbar, (297, 375))
+bossbar6 = pygame.transform.scale(bossbar, (252, 375))
+bossbar5 = pygame.transform.scale(bossbar, (207, 375))
+bossbar4 = pygame.transform.scale(bossbar, (162, 375))
+bossbar3 = pygame.transform.scale(bossbar, (117, 375))
+bossbar2 = pygame.transform.scale(bossbar, (72, 375))
+bossbar1 = pygame.transform.scale(bossbar, (28, 375))
+bossbar0 = pygame.transform.scale(bossbar, (29, 375))
+bossbarbg = pygame.image.load("Wizard/wizard_bossbar_bg.png")
+bossbar_list = [bossbarbg, bossbar0, bossbar1, bossbar2, bossbar3, bossbar4, bossbar5, bossbar6, bossbar7, bossbar8, bossbar9, bossbar10, 
+bossbar11, bossbar12, bossbar13, bossbar14, bossbar15]
+print(f"bossbar width is {bossbar.get_width()}, bossbar height is {bossbar.get_height()}, bg width is {bossbarbg.get_width()}, bg height it {bossbarbg.get_height()}")
+
 boss_anim_state = 0
 
 boss_rect = boss_walk_right7.get_rect()
@@ -576,29 +598,27 @@ while running:
               current_elementals_list[i].elemental_rect.y -= (current_elementals_list[i].elemental_rect.y - player_rect.y) / temp_var1
               if current_elementals_list[i].dist_to_plyr < 60:
                   print("the elemental got you")
-              #if (current_elementals_list[i].elemental_rect.y < player_rect.y - 35 or current_elementals_list[i].elemental_rect.y > player_rect.y - 15) and current_elementals_list[i].elemental_rect.x == player_rect.x - 20:
-                  #maybe I should make this a function
-                  #BIG BUG: ELEMENTAL NOT DELETED (fixed)
-                  game_level -= 1
-                  obstacle_list.clear()
-                  for i in range(len(all_box_x_lists[game_level])):
-                      obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
-                  for i in range(int(len(all_elemental_lists[game_level]) / 3)):
-                      current_elementals_list.append(AirElemental(all_elemental_lists[game_level][i * 3], all_elemental_lists[game_level][(i * 3) + 1], all_elemental_lists[game_level][(i * 3) + 2]))
-                  flag_rect.x = flag_x_list[game_level]
-                  flag_rect.y = flag_y_list[game_level]
-                  current_elementals_list.clear()
-                  break
+                  if game_level == 6:
+                      print("you died L")
+                  else:
+                      game_level -= 1
+                      obstacle_list.clear()
+                      for i in range(len(all_box_x_lists[game_level])):
+                          obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
+                      for i in range(int(len(all_elemental_lists[game_level]) / 3)):
+                          current_elementals_list.append(AirElemental(all_elemental_lists[game_level][i * 3], all_elemental_lists[game_level][(i * 3) + 1], all_elemental_lists[game_level][(i * 3) + 2]))
+                      flag_rect.x = flag_x_list[game_level]
+                      flag_rect.y = flag_y_list[game_level]
+                      current_elementals_list.clear()
+                      break
               #current_elementals_list[i].elemental_rect.x -= 0.05 * (current_elementals_list[i].elemental_rect.x - player_rect.x)
               #current_elementals_list[i].elemental_rect.y -= 
-      print(boss_random_atack_cd)
       #boss logic
       if boss_random_atack_cd > 0:
           boss_random_atack_cd -= 1
       if boss_random_atack_cd == 0:
           boss_anim_state = random.randint(1, 3)
           boss_random_atack_cd = 1000
-          #boss_random_attack_cd = random.randint(50, 150)
           if boss_anim_state == 1:
               boss_anim_frame2 = 0
               boss_target_x = player_rect.x
@@ -676,6 +696,10 @@ while running:
       if laser_projectiles[i].angle == 7:
           laser_projectiles[i].projectile_rect.y -= 5
           laser_projectiles[i].projectile_rect.x -= 5
+  for i in range(len(current_fireballs)):
+      if player_rect.x < current_fireballs[i].fireball_rect.x + 75 and player_rect.x > current_fireballs[i].fireball_rect.x - 75:
+          if player_rect.y < current_fireballs[i].fireball_rect.y + 25 and player_rect.y > current_fireballs[i].fireball_rect.y - 25:
+              print("you died L")
   # Clear the screen
   screen.fill((0, 0, 0)) 
 
@@ -793,6 +817,8 @@ while running:
               temp_elemental_count = 0
           if boss_anim_frame4 == 54:
               boss_anim_state = 0
+      screen.blit(bossbarbg, (300, -100))
+      screen.blit(bossbar_list[boss_hp + 1], (300, -100))
   for i in range(len(current_lightning)):
       if current_lightning[i].frame_num > 4:
           del current_lightning[0]
@@ -800,6 +826,8 @@ while running:
       screen.blit(current_lightning[i].frames[current_lightning[i].frame_num], (current_lightning[i].lightning_rect.x - 10, current_lightning[i].lightning_rect.y - 300))
   for i in range(len(current_fireballs)):
       screen.blit(current_fireballs[i].fireball_frames[fireball_anim_frame], current_fireballs[i].fireball_rect)
+  
+  
   #if game_level == 4:
     #screen.blit(air_elemental_idle_right1, (400, 300))
     #screen.blit(air_elemental_idle_right_frames[air_anim_frame], (400, 300))
