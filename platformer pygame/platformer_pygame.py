@@ -269,6 +269,9 @@ bossbar_list = [bossbarbg, bossbar0, bossbar1, bossbar2, bossbar3, bossbar4, bos
 bossbar11, bossbar12, bossbar13, bossbar14, bossbar15]
 print(f"bossbar width is {bossbar.get_width()}, bossbar height is {bossbar.get_height()}, bg width is {bossbarbg.get_width()}, bg height it {bossbarbg.get_height()}")
 
+tutorial = pygame.image.load("Wizard/wizard_tutorial.png")
+heart = pygame.image.load("Wizard/heart.png")
+heart = pygame.transform.scale(heart, (int(heart.get_width() * 0.05), int(heart.get_height() * 0.05)))
 boss_anim_state = 0
 
 boss_rect = boss_walk_right7.get_rect()
@@ -390,6 +393,9 @@ boss_target_x = 0
 boss_target_y = 0
 temp_elemental_count = 0
 boss_fireball_counter = 0
+tutorial_closed = False
+player_health = 5
+player_dmg_cd = 0
 # Game loop
 running = True
 while running:
@@ -474,12 +480,14 @@ while running:
       boss_random_attack_cd = 1000000
   if keys[pygame.K_p]:
       boss_random_attack_cd = 5
+  if keys[pygame.K_z] and game_level == 6:
+      tutorial_closed = True
       
       #boss_random_attack_cd
   # if player presses space create new instance of LaserProjectile at player x and y
   # in at the angle of gun
   #BUG1
-  if keys[pygame.K_SPACE]:
+  if keys[pygame.K_SPACE] or keys[pygame.K_q]:
       if gun_cooldown <= 0:
         laser_projectiles.append(LaserProjectile(player_rect.x, player_rect.y, player_gun_dir))
         gun_cooldown = 25
@@ -542,6 +550,8 @@ while running:
                       else:
                           del current_elementals_list[o]
                           break
+      if player_dmg_cd > 0:
+          player_dmg_cd -= 1
       lightning_frame += 1
       if lightning_frame == 5:
         for i in range(len(current_lightning)):
@@ -593,13 +603,15 @@ while running:
               print("air elemental sees you!")
               current_elementals_list[i].chasing = True
           if current_elementals_list[i].chasing:
-              temp_var1 = ((current_elementals_list[i].elemental_rect.x - player_rect.x) ** 2 + (current_elementals_list[i].elemental_rect.y - player_rect.y) ** 2) / 15 ** 2
+              temp_var1 = ((current_elementals_list[i].elemental_rect.x - player_rect.x) ** 2 + (current_elementals_list[i].elemental_rect.y - player_rect.y) ** 2) / 15 ** 2 + 0.001
               current_elementals_list[i].elemental_rect.x -= (current_elementals_list[i].elemental_rect.x - player_rect.x) / temp_var1
               current_elementals_list[i].elemental_rect.y -= (current_elementals_list[i].elemental_rect.y - player_rect.y) / temp_var1
               if current_elementals_list[i].dist_to_plyr < 60:
                   print("the elemental got you")
                   if game_level == 6:
-                      print("you died L")
+                      if player_dmg_cd == 0:
+                          player_health -= 1
+                          player_dmg_cd = 100
                   else:
                       game_level -= 1
                       obstacle_list.clear()
@@ -614,7 +626,7 @@ while running:
               #current_elementals_list[i].elemental_rect.x -= 0.05 * (current_elementals_list[i].elemental_rect.x - player_rect.x)
               #current_elementals_list[i].elemental_rect.y -= 
       #boss logic
-      if boss_random_atack_cd > 0:
+      if boss_random_atack_cd > 0 and game_level == 6:
           boss_random_atack_cd -= 1
       if boss_random_atack_cd == 0:
           boss_anim_state = random.randint(1, 3)
@@ -664,7 +676,10 @@ while running:
           laser_projectiles[i].boss_distance = math.sqrt((abs(boss_rect.x - laser_projectiles[i].projectile_rect.x - 0) ** 2) + (abs(boss_rect.y - laser_projectiles[i].projectile_rect.y - 0) ** 2))
       for i in range(len(current_lightning)):
           if current_lightning[i].lightning_rect.x + 25 > player_rect.x and current_lightning[i].lightning_rect.x - 25 < player_rect.x:
-              print("you died L")
+              if player_dmg_cd == 0:
+                  player_health -= 1
+                  player_dmg_cd = 100
+              
       last_time_comped = round(time.time(), 2)
     #removes a laser projectile if it is too far away
   for i in range(len(laser_projectiles)):
@@ -699,7 +714,12 @@ while running:
   for i in range(len(current_fireballs)):
       if player_rect.x < current_fireballs[i].fireball_rect.x + 75 and player_rect.x > current_fireballs[i].fireball_rect.x - 75:
           if player_rect.y < current_fireballs[i].fireball_rect.y + 25 and player_rect.y > current_fireballs[i].fireball_rect.y - 25:
-              print("you died L")
+              if player_dmg_cd == 0:
+                  player_dmg_cd = 100
+                  player_health -= 1
+  print(player_health)
+  if player_health == 0:
+      print("You died L")
   # Clear the screen
   screen.fill((0, 0, 0)) 
 
@@ -826,8 +846,20 @@ while running:
       screen.blit(current_lightning[i].frames[current_lightning[i].frame_num], (current_lightning[i].lightning_rect.x - 10, current_lightning[i].lightning_rect.y - 300))
   for i in range(len(current_fireballs)):
       screen.blit(current_fireballs[i].fireball_frames[fireball_anim_frame], current_fireballs[i].fireball_rect)
-  
-  
+  if not tutorial_closed and game_level == 6:
+      screen.blit(tutorial, (0, 0))
+  if player_health >= 5:
+      screen.blit(heart, (1150, 550))
+  if player_health >= 4:
+      screen.blit(heart, (1100, 550))
+  if player_health >= 3:
+      screen.blit(heart, (1050, 550))
+  if player_health >= 2:
+      screen.blit(heart, (1000, 550))
+  if player_health >= 1:
+      screen.blit(heart, (950, 550))
+  if game_level == 6 and player_health == 0:
+      running = False
   #if game_level == 4:
     #screen.blit(air_elemental_idle_right1, (400, 300))
     #screen.blit(air_elemental_idle_right_frames[air_anim_frame], (400, 300))
