@@ -130,7 +130,7 @@ class LightningAttack:
         self.frame_counter = 0
 current_lightning = []
 
-# Load the player sprite (yellow box) and scale it down
+# Player initializing
 player = pygame.image.load("plyr.png")
 plyr_width, plyr_height = int(player.get_width() * 0.10), int(player.get_height() * 0.10)
 player = pygame.transform.scale(player, (plyr_width, plyr_height))
@@ -151,24 +151,7 @@ gun_left = pygame.transform.scale(gun_left, (int(gun_left.get_width() * 0.15), i
 gun_left_up = pygame.image.load("LeftUp.png")
 gun_left_up = pygame.transform.scale(gun_left_up, (int(gun_left_up.get_width() * 0.15), int(gun_left_up.get_height() * 0.15)))
 
-#air_elemental_idle_right1 = pygame.image.load("AirElementalIdle/air_idle_right0.png")
-#air_elemental_idle_right2 = pygame.image.load("AirElementalIdle/air_idle_right1.png")
-#air_elemental_idle_right3 = pygame.image.load("AirElementalIdle/air_idle_right2.png")
-#air_elemental_idle_right4 = pygame.image.load("AirElementalIdle/air_idle_right3.png")
-#air_elemental_idle_right5 = pygame.image.load("AirElementalIdle/air_idle_right4.png")
-#air_elemental_idle_right6 = pygame.image.load("AirElementalIdle/air_idle_right5.png")
-#air_elemental_idle_right_frames = [air_elemental_idle_right1, air_elemental_idle_right2, air_elemental_idle_right3,
-#air_elemental_idle_right4, air_elemental_idle_right5, air_elemental_idle_right6]
-
-#air_elemental_idle_left1 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left0.png")
-#air_elemental_idle_left2 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left1.png")
-#air_elemental_idle_left3 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left2.png")
-#air_elemental_idle_left4 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left3.png")
-#air_elemental_idle_left5 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left4.png")
-#air_elemental_idle_left6 = pygame.image.load("AirElementalIdle/air_idle_left/air_idle_left5.png")
-#air_elemental_idle_left_frames = [air_elemental_idle_left1, air_elemental_idle_left2, air_elemental_idle_left3,
-#air_elemental_idle_left4, air_elemental_idle_left5, air_elemental_idle_left6]
-
+# All boss animations
 boss_walk_right0 = pygame.image.load("Wizard/WizardRunRight/wizard_run_right0.png")
 boss_walk_right1 = pygame.image.load("Wizard/WizardRunRight/wizard_run_right1.png")
 boss_walk_right2 = pygame.image.load("Wizard/WizardRunRight/wizard_run_right2.png")
@@ -267,7 +250,6 @@ bossbar0 = pygame.transform.scale(bossbar, (29, 375))
 bossbarbg = pygame.image.load("Wizard/wizard_bossbar_bg.png")
 bossbar_list = [bossbarbg, bossbar0, bossbar1, bossbar2, bossbar3, bossbar4, bossbar5, bossbar6, bossbar7, bossbar8, bossbar9, bossbar10, 
 bossbar11, bossbar12, bossbar13, bossbar14, bossbar15]
-print(f"bossbar width is {bossbar.get_width()}, bossbar height is {bossbar.get_height()}, bg width is {bossbarbg.get_width()}, bg height it {bossbarbg.get_height()}")
 
 tutorial = pygame.image.load("Wizard/wizard_tutorial.png")
 heart = pygame.image.load("Wizard/heart.png")
@@ -347,14 +329,17 @@ box_y_list6 = [450, 400, 300, 250, 300, 300, 300, 300, 250, 200, 200, 200]
 box_x_list7 = [100]
 box_y_list7 = [500]
 
-all_box_x_lists = [box_x_list1, box_x_list2, box_x_list3, box_x_list4, box_x_list5, box_x_list6, box_x_list7]
-all_box_y_lists = [box_y_list1, box_y_list2, box_y_list3, box_y_list4, box_y_list5, box_y_list6, box_y_list7]
+box_x_list8 = []
+box_y_list8 = []
+
+all_box_x_lists = [box_x_list1, box_x_list2, box_x_list3, box_x_list4, box_x_list5, box_x_list6, box_x_list7, box_x_list8]
+all_box_y_lists = [box_y_list1, box_y_list2, box_y_list3, box_y_list4, box_y_list5, box_y_list6, box_y_list7, box_y_list8]
 obstacle_list = []
 for i in range(len(all_box_x_lists[game_level])):
     obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
 
-flag_x_list = [200, 1000, 650, 850, 1000, 800, 100]
-flag_y_list = [100,  400, 250, 400,  250, 200, 9999]
+flag_x_list = [200, 1000, 650, 850, 1000, 800, 100, 100]
+flag_y_list = [100,  400, 250, 400,  250, 200, 9999, 9999]
 
 #format: x, y, target
 air_elemental_list1 = []
@@ -364,8 +349,9 @@ air_elemental_list4 = []
 air_elemental_list5 = [400, 300, 550, 700, 200, 850]
 air_elemental_list6 = [400, 200, 600, 600, 200, 400]
 air_elemental_list7 = []
+air_elemental_list8 = []
 all_elemental_lists = [air_elemental_list1, air_elemental_list2, air_elemental_list3, 
-air_elemental_list4, air_elemental_list5, air_elemental_list6, air_elemental_list7]
+air_elemental_list4, air_elemental_list5, air_elemental_list6, air_elemental_list7, air_elemental_list8]
 current_elementals_list = []
 laser_projectiles = []
 current_fireballs = []
@@ -396,6 +382,7 @@ boss_fireball_counter = 0
 tutorial_closed = False
 player_health = 5
 player_dmg_cd = 0
+boss_fight_done = False
 # Game loop
 running = True
 while running:
@@ -423,7 +410,6 @@ while running:
 # player direction; see diagram above
   if keys[pygame.K_LEFT]:
       if keys[pygame.K_UP]:
-          print("pressed")
           player_gun_dir = 7
       elif keys[pygame.K_DOWN]:
           player_gun_dir = 5
@@ -531,7 +517,6 @@ while running:
             for i in range(len(all_box_x_lists[game_level])):
                 obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
             for i in range(int(len(all_elemental_lists[game_level]) / 3)):
-                # issue, not totally sure how. The list is only moveing forward by one
                 current_elementals_list.append(AirElemental(all_elemental_lists[game_level][i * 3], all_elemental_lists[game_level][i * 3 + 1], all_elemental_lists[game_level][i * 3 + 2]))
                 print(f"made a new elemental with {all_elemental_lists[game_level][i*3]} x, {all_elemental_lists[game_level][(i*3) + 1]} y, {all_elemental_lists[game_level][(i*3) + 2]} target x.")
             y_velocity -= 10
@@ -717,7 +702,6 @@ while running:
               if player_dmg_cd == 0:
                   player_dmg_cd = 100
                   player_health -= 1
-  print(player_health)
   if player_health == 0:
       print("You died L")
   # Clear the screen
@@ -750,8 +734,19 @@ while running:
   for i in range(len(laser_projectiles)):
       screen.blit(laser_projectiles[i].projectile, (laser_projectiles[i].projectile_rect.x, laser_projectiles[i].projectile_rect.y))
   screen.blit(flag, (flag_rect.x + 16, flag_rect.y - 79))
-  if boss_hp <= 0:
+  if boss_hp <= 0 and not boss_fight_done:
       print("you win! YAYY")
+      game_level = 7
+      obstacle_list.clear()
+      for i in range(len(all_box_x_lists[game_level])):
+          obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
+      for i in range(int(len(all_elemental_lists[game_level]) / 3)):
+          current_elementals_list.append(AirElemental(all_elemental_lists[game_level][i * 3], all_elemental_lists[game_level][i * 3 + 1], all_elemental_lists[game_level][i * 3 + 2]))
+          print(f"made a new elemental with {all_elemental_lists[game_level][i*3]} x, {all_elemental_lists[game_level][(i*3) + 1]} y, {all_elemental_lists[game_level][(i*3) + 2]} target x.")
+      y_velocity -= 10
+      flag_rect.x = flag_x_list[game_level]
+      flag_rect.y = flag_y_list[game_level]
+      boss_fight_done = True
   if game_level == 6:
       if boss_anim_state == 0:
           if boss_direction == 1:
@@ -874,3 +869,10 @@ pygame.quit()
 sys.exit()
 
 
+# credits:
+# Heroes of might and magic 3 for the wizard and air elemental animations
+# Minecraft for heart png
+# Metal Slug 3 for fireball
+# ChatGPT for basic pygame initializing and setting up loops
+# Sawyer for help with code
+# Chris, Chris, Aditya and everyone else for playtesting
