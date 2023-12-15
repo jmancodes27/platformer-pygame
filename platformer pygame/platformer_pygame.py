@@ -3,11 +3,31 @@ import sys
 import time
 import math
 import random
-# part of the code was written with chatgpt
+# part of the code was written with chatgpt(see bottom)
 start_time = time.time()
 game_time = 0
-
-# Initialize Pygame
+# for some reason the pygame graph goes like this:
+#
+#           0
+#           _
+#           _
+#           _
+#           _
+#0_________500_______1000
+#           _
+#           _
+#           _
+#           _
+#          1000
+#
+# Player direction goes like this:
+#     0
+#  7     1
+# 6        2
+#  5      3
+#     4
+#    
+#4 is currently not used
 pygame.init()
 def update_time():
     game_time = time.time() - start_time
@@ -254,60 +274,15 @@ bossbar11, bossbar12, bossbar13, bossbar14, bossbar15]
 tutorial = pygame.image.load("Wizard/wizard_tutorial.png")
 heart = pygame.image.load("Wizard/heart.png")
 heart = pygame.transform.scale(heart, (int(heart.get_width() * 0.05), int(heart.get_height() * 0.05)))
-boss_anim_state = 0
 
-boss_rect = boss_walk_right7.get_rect()
-boss_rect.x = 300
-boss_rect.y = 400
-# 0 is not moving, 1 is moving right, 2 is moving left
-boss_direction = 1
-boss_ai_on = True
-boss_hp_cd = 1000
-boss_hp = 15
-boss_random_atack_cd = 1000
-
-# loads the flag ito surface
 flag = pygame.image.load("flag.png")
 flag = pygame.transform.scale(flag, (int(flag.get_width() * 0.15), int(flag.get_height() * 0.15)))
 flag_rect = flag.get_rect()
-flag_rect.x = 200
-flag_rect.y = 100
+game_level = 0
 # tile width and height gotten from original width / 10
 tile_width = 38
 tile_height = 38
-player_rect = player.get_rect()
-player_rect.center = (1000, 400)
-can_jump = True
-game_level = 0
-frame_rate = 180
-time_per_frame = 1 / frame_rate
-# for some reason the pygame graph goes like this:
-#
-#           0
-#           _
-#           _
-#           _
-#           _
-#0_________500_______1000
-#           _
-#           _
-#           _
-#           _
-#          1000
-#
-# Player direction goes like this:
-#     0
-#  7     1
-# 6        2
-#  5      3
-#     4
-#    
-#4 is currently not used
-
 # I wish python had arrays :sobbing:
-# box 1 : 1000, 500
-# box 2 : 800, 400
-# box 3 : 
 box_x_list1 = [1000, 800, 600, 400, 200]
 box_y_list1 = [ 500, 400, 300, 200, 100]
 
@@ -358,6 +333,23 @@ current_elementals_list = []
 laser_projectiles = []
 current_fireballs = []
 
+boss_anim_state = 0
+boss_rect = boss_walk_right7.get_rect()
+boss_rect.x = 300
+boss_rect.y = 400
+# 0 is not moving, 1 is moving right, 2 is moving left
+boss_direction = 1
+boss_ai_on = True
+boss_hp_cd = 1000
+boss_hp = 15
+boss_random_attack_cd = 8000
+flag_rect.x = 200
+flag_rect.y = 100
+player_rect = player.get_rect()
+player_rect.center = (1000, 400)
+can_jump = True
+frame_rate = 180
+time_per_frame = 1 / frame_rate
 # Set initial movement variables
 player_speed = 1
 x_velocity = 0
@@ -375,7 +367,7 @@ boss_anim_frame2 = 0
 boss_anim_frame3 = 0
 boss_anim_frame4 = 0
 fireball_anim_frame = 0
-debug_level = 7
+debug_level = 6
 lightning_frame = 0
 boss_target_x = 0
 boss_target_y = 0
@@ -434,7 +426,6 @@ while running:
       for i in range(len(all_box_x_lists[game_level])):
           obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
       for i in range(int(len(all_elemental_lists[game_level]) / 3)):
-          # issue, not totally sure how. The list is only moveing forward by one
           current_elementals_list.append(AirElemental(all_elemental_lists[game_level][i * 3], all_elemental_lists[game_level][i * 3 + 1], all_elemental_lists[game_level][i * 3 + 2]))
           print(f"made a new elemental with {all_elemental_lists[game_level][i*3]} x, {all_elemental_lists[game_level][(i*3) + 1]} y, {all_elemental_lists[game_level][(i*3) + 2]} target x.")
       flag_rect.x = flag_x_list[game_level]
@@ -470,8 +461,8 @@ while running:
       boss_random_attack_cd = 5
   if keys[pygame.K_z] and game_level == 6:
       tutorial_closed = True
-      
-      #boss_random_attack_cd
+      boss_random_attack_cd = 100
+  print(boss_random_attack_cd)
   # if player presses space create new instance of LaserProjectile at player x and y
   # in at the angle of gun
   #BUG1
@@ -482,6 +473,7 @@ while running:
   
   # loops consistantly
   if last_time_comped != round(time.time(), 2):
+      # handles physics
       plyr_coli_rect = pygame.Rect(player_rect.x, player_rect.y, 50, 50)
       player_rect.y -= y_velocity
       if player_rect.y > 550:
@@ -496,7 +488,7 @@ while running:
           x_velocity -= 0.1
       elif x_velocity < 0:
           x_velocity += 0.1
-
+      # handles collisions
       for i in range(len(obstacle_list)):
         if plyr_coli_rect.colliderect(obstacle_list[i].tile_coli_rect):
             if player_rect.y > obstacle_list[i].tile_rect.y + 0 + 7:
@@ -524,8 +516,6 @@ while running:
             y_velocity -= 10
             flag_rect.x = flag_x_list[game_level]
             flag_rect.y = flag_y_list[game_level]
-      if boss_hp_cd > 0:
-          boss_hp_cd -= 1
       for i in range(len(laser_projectiles)):
           for o in range(len(current_elementals_list)):
               if laser_projectiles[i].projectile_rect.colliderect(current_elementals_list[o].elemental_rect):
@@ -613,11 +603,15 @@ while running:
               #current_elementals_list[i].elemental_rect.x -= 0.05 * (current_elementals_list[i].elemental_rect.x - player_rect.x)
               #current_elementals_list[i].elemental_rect.y -= 
       #boss logic
-      if boss_random_atack_cd > 0 and game_level == 6:
-          boss_random_atack_cd -= 1
-      if boss_random_atack_cd == 0:
+      if boss_hp_cd > 0:
+          boss_hp_cd -= 1
+      if boss_rect.y > 600:
+          boss_rect.y = 300
+      if boss_random_attack_cd > 0 and game_level == 6:
+          boss_random_attack_cd -= 1
+      if boss_random_attack_cd == 0:
           boss_anim_state = random.randint(1, 3)
-          boss_random_atack_cd = 1000
+          boss_random_attack_cd = 1000
           if boss_anim_state == 1:
               boss_anim_frame2 = 0
               boss_target_x = player_rect.x
@@ -875,6 +869,6 @@ sys.exit()
 # Heroes of might and magic 3 for the wizard and air elemental animations
 # Minecraft for heart png
 # Metal Slug 3 for fireball
-# ChatGPT for basic pygame initializing and setting up loops
+# ChatGPT for basic pygame initializing setting up both loops
 # Sawyer for help with code
 # Chris, Chris, Aditya and everyone else for playtesting
