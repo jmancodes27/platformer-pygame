@@ -388,6 +388,10 @@ while running:
       running = False
   #updates the in game time
   update_time()
+  if player_rect.x > 1200:
+      player_rect.x = 0
+  if player_rect.x < -50:
+      player_rect.x = 1200
 
   # Handle player movement
   keys = pygame.key.get_pressed()
@@ -699,7 +703,7 @@ while running:
                   player_dmg_cd = 100
                   player_health -= 1
   if player_health == 0:
-      print("You died L")
+      print("You died :(")
   screen.fill((0, 0, 0)) 
   #drawing everything on the screen
   frame_start_time = time.time()
