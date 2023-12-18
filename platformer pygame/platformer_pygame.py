@@ -1,3 +1,13 @@
+# credits:
+# Heroes of might and magic 3 for the wizard and air elemental animations
+# Minecraft for heart png
+# Metal Slug 3 for fireball
+# Romance of the Three Kingdoms VIII for lightning animation
+# ChatGPT for basic pygame initializing setting up both loops
+# Sawyer for help with code
+# Chris, Chris, Aditya and everyone else for playtesting
+# Tested on windows in visual studio
+# Used Piskel and stack overflow
 import pygame
 import sys
 import time
@@ -865,11 +875,3 @@ pygame.quit()
 sys.exit()
 
 
-# credits:
-# Heroes of might and magic 3 for the wizard and air elemental animations
-# Minecraft for heart png
-# Metal Slug 3 for fireball
-# Romance of the Three Kingdoms VIII for lightning animation
-# ChatGPT for basic pygame initializing setting up both loops
-# Sawyer for help with code
-# Chris, Chris, Aditya and everyone else for playtesting
