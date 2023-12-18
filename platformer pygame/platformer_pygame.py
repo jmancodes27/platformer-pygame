@@ -737,6 +737,7 @@ while running:
       print("you win! YAYY")
       game_level = 7
       obstacle_list.clear()
+      current_elementals_list.clear()
       for i in range(len(all_box_x_lists[game_level])):
           obstacle_list.append(Obstacle(all_box_x_lists[game_level][i], all_box_y_lists[game_level][i], tile_width, tile_height))
       for i in range(int(len(all_elemental_lists[game_level]) / 3)):
